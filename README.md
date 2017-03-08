@@ -17,3 +17,7 @@
 ## Guides
 
 - [Miroir git](guides/git_mirror.md)
+
+## Dépendances
+
+- [Termbox](https://github.com/nsf/termbox) - [AUR](https://aur.archlinux.org/packages/termbox-git)
