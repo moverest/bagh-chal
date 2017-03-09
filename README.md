@@ -17,6 +17,7 @@
 ## Guides
 
 - [Miroir git](guides/git_mirror.md)
+- [Exercice Termbox](guides/train_termbox.md)
 
 ## Dépendances
 
