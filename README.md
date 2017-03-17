@@ -9,9 +9,6 @@
 ## Compiler le projet
 
 ```
-> mkdir build
-> cd build
-> cmake ..
 > make
 ```
 ## Guides
