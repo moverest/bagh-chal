@@ -4,10 +4,10 @@ BUILD_DIR=build
 
 TERMBOX_FLAG=-ltermbox
 
-all: build_dir term
+all: test_graphics_tb
 
-term:
-	$(CC) $(TERMBOX_FLAG) -o $(BUILD_DIR)/test $(SRC_DIR)/term_main.c $(SRC_DIR)/graphics_tb.c
+test_graphics_tb: build_dir
+	$(CC) $(TERMBOX_FLAG) -o $(BUILD_DIR)/test_graphics_tb $(SRC_DIR)/test_graphics_tb.c $(SRC_DIR)/graphics_tb.c
 
 build_dir:
 	mkdir -p $(BUILD_DIR)
