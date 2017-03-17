@@ -18,8 +18,8 @@ graphics_tb_t *graphics_tb_init() {
 }
 
 
-void graphics_tb_draw(void *context, state_to_draw_t* state) {
-    graphics_tb_t *tg = (graphics_tb_t*) context;
+void graphics_tb_draw(void *context, state_to_draw_t *state) {
+    graphics_tb_t *tg = (graphics_tb_t *)context;
 }
 
 

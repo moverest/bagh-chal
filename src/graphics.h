@@ -4,12 +4,12 @@
 #include "models.h"
 
 typedef struct {
-    int num_goats_to_put;
-    int num_eaten_goats;
+    int           num_goats_to_put;
+    int           num_eaten_goats;
     player_turn_t turn;
-    mvt_t input;
-    mvt_t* possible_mvts;
-    board_t* board;
+    mvt_t         input;
+    mvt_t         *possible_mvts;
+    board_t       *board;
 } state_to_draw_t;
 
 #endif

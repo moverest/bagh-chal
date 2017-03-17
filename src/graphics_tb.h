@@ -12,7 +12,7 @@ typedef struct {}   graphics_tb_t;
 graphics_tb_t *graphics_tb_init();
 
 // graphics_tb_draw draws the given state on the screen.
-void graphics_tb_draw(void *context, state_to_draw_t* state);
+void graphics_tb_draw(void *context, state_to_draw_t *state);
 
 // graphics_tb_quit terminate the graphic module.
 void graphics_tb_quit(graphics_tb_t *tg);
