@@ -9,6 +9,7 @@ typedef struct {
     player_turn_t turn;
     mvt_t         input;
     mvt_t         *possible_mvts;
+    size_t        num_possible_mvts;
     board_t       *board;
 } state_to_draw_t;
 
