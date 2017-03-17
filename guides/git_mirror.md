@@ -4,13 +4,22 @@
 
 Pour se rappeler de mettre à jour le miroir, un bot Slack rappelera les membres tous les lundis.
 
-## Ajout du remote
+## Méthode automatisée
+
+Il faudra penser à paramétrer une clef d'authentification SSH pour se connecter au dépot GitHub.
+
+```
+./update_mirror.sh
+```
+
+## Méthode manuelle
+### Ajout du remote
 
 ```
 > git remote add forge 'https://forge.telecomnancy.univ-lorraine.fr/git/martine96u_c'
 ```
 
-## Mise à jour du miroir
+### Mise à jour du miroir
 
 ```
 > git push --mirror forge
