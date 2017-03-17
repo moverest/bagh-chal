@@ -2,9 +2,9 @@
 #define __MODELS_H__
 
 typedef enum {
-    GOAT,
-    TIGER,
-    EMPTY
+    GOAT_CELL,
+    TIGER_CELL,
+    EMPTY_CELL
 } cell_state_t;
 
 typedef struct {
@@ -22,8 +22,8 @@ typedef struct {
 } mvt_t;
 
 typedef enum {
-    GOAT,
-    TIGER
+    GOAT_TURN,
+    TIGER_TURN
 } player_turn_t;
 
 #endif

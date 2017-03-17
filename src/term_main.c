@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "termbox_graphics.h"
+#include "graphics_tb.h"
 
 int main(int argc, char **argv) {
-    termbox_graphics_t *graphics = termbox_graphics_init();
+    graphics_tb_t *graphics = graphics_tb_init();
 
     if (graphics == NULL) {
         fprintf(stderr, "Could not initialize termbox");
         return 1;
     }
 
-    termbox_graphics_quit(graphics);
+    graphics_tb_quit(graphics);
     return 0;
 }
