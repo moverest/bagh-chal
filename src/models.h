@@ -12,7 +12,7 @@ typedef struct {
 } board_t;
 
 typedef struct {
-    int l;
+    int r;
     int c;
 } position_t;
 
