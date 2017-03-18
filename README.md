@@ -11,6 +11,12 @@
 ```
 > make
 ```
+
+Pour compiler le code avec les flags de débuggage:
+
+```
+make debug
+```
 ## Guides
 
 - [Miroir git](guides/git_mirror.md)
