@@ -1,8 +1,12 @@
-CC=gcc
+CCFLAGS=
 SRC_DIR=src
 BUILD_DIR=build
+CC=gcc $(CCFLAGS)
 
 TERMBOX_FLAG=-ltermbox
+
+debug: CCFLAGS += -DDEBUG -g
+debug: all
 
 all: $(BUILD_DIR)/test_graphics_tb $(BUILD_DIR)/test_game
 
