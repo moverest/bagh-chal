@@ -18,11 +18,18 @@ typedef struct {
     char ok[5 * 5];
 } possible_positions_t;
 
+// POSITION_NOT_SET is used when a coordinate is not yet set.
+// This is used when using the `mvt_t` structure as to store the input.
+// It is also used to place goats. The `to` field is then marked as not set.
+#define POSITION_NOT_SET -1
+
 typedef struct {
     int r;
     int c;
 } position_t;
 
+// mvt_t represents a movement in the game. When placing a goat on the board,
+// the `to` field is marked as not set.
 typedef struct {
     position_t from;
     position_t to;
