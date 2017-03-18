@@ -14,9 +14,7 @@ static void test_graphics_tb() {
     }
 
     state_to_draw_t state;
-    mvt_t           possible_mvts[3]; // TODO: Set possible movements
-    state.num_possible_mvts = 3;
-    board_t board;
+    board_t         board;
 
     state.num_goats_to_put = 10;
     state.num_eaten_goats  = 10;
@@ -25,8 +23,9 @@ static void test_graphics_tb() {
     state.input.from.c     = 1;
     state.input.to.r       = 2;
     state.input.to.c       = 1;
-    state.possible_mvts    = possible_mvts;
     state.board            = &board;
+
+    //TODO: Set values
 
     graphics_tb_draw(graphics, &state);
 
