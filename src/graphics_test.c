@@ -10,7 +10,7 @@
     if (event.type != EVENT_KEY || event.key != key_name) { \
         sprintf(err_msg, "Expected %s", # key_name);        \
         return false;                                       \
-    }\
+    }                                                       \
 
 #define TEST_EVENT_CH(ch_name)                                      \
     sprintf(state.msg, "Press %c", ch_name);                        \
@@ -38,7 +38,7 @@
         return false;                                                                                      \
     }
 
-#define WAIT_BEFORE_NEXT_TEST()                                              \
+#define WAIT_BEFORE_NEXT_TEST()                                  \
     do {                                                         \
         draw(context, &state);                                   \
         wait_event(context, &event);                             \
