@@ -5,16 +5,22 @@ CC=gcc $(CCFLAGS)
 
 TERMBOX_FLAG=-ltermbox
 
-debug: CCFLAGS += -DDEBUG -g
+debug: CCFLAGS += -DDEBUG -g -Wall
 debug: all
 
-all: $(BUILD_DIR)/test_graphics_tb $(BUILD_DIR)/test_game $(BUILD_DIR)/test_test
+all: $(foreach f, test_graphics_tb test_game test_test, $(BUILD_DIR)/$f)
 
-$(BUILD_DIR)/test_game: build_dir $(BUILD_DIR)/models.o $(BUILD_DIR)/test.o
-	$(CC) -o $@ $(SRC_DIR)/test_game.c $(SRC_DIR)/game.c $(BUILD_DIR)/models.o $(BUILD_DIR)/test.o
+$(BUILD_DIR)/test_game: build_dir $(foreach f, models.o test.o game.o, $(BUILD_DIR)/$f)
+	$(CC) -o $@ $(SRC_DIR)/test_game.c $(foreach f, models.o test.o game.o, $(BUILD_DIR)/$f)
 
-$(BUILD_DIR)/test_graphics_tb: build_dir $(BUILD_DIR)/models.o $(BUILD_DIR)/test.o
-	$(CC) $(TERMBOX_FLAG) -o $@ $(SRC_DIR)/test_graphics_tb.c $(SRC_DIR)/graphics_tb.c $(BUILD_DIR)/models.o $(BUILD_DIR)/test.o
+$(BUILD_DIR)/test_graphics_tb: build_dir $(foreach f, models.o graphics_tb.o, $(BUILD_DIR)/$f)
+	$(CC) $(TERMBOX_FLAG) -o $@ $(SRC_DIR)/test_graphics_tb.c $(foreach f, models.o graphics_tb.o, $(BUILD_DIR)/$f)
+
+$(BUILD_DIR)/graphics_tb.o: build_dir
+	$(CC) -c $(SRC_DIR)/graphics_tb.c -o $@
+
+$(BUILD_DIR)/game.o: build_dir
+	$(CC) -c $(SRC_DIR)/game.c -o $@
 
 $(BUILD_DIR)/models.o: build_dir
 	$(CC) -c $(SRC_DIR)/models.c -o $@
