@@ -1,5 +1,7 @@
 #include "test.h"
 
+#include <stdio.h>
+
 static void test_run_individual(test_t *t, test_function_t test_function) {
     test_function.f(t);
 
@@ -23,7 +25,13 @@ int test_run(test_function_t test_functions[], size_t num_tests) {
         test_run_individual(&test, test_functions[i]);
     }
 
-    printf("\n%d test(s) succeeded.\n", test.num_successes);
+    printf("\n\x1b[32m%d succeeded.\x1b[0m\n", test.num_successes);
+
+    if (test.failed) {
+        puts("\x1b[31m1 failed.\x1b[0m");
+        printf("\x1b[33m%d left to be tested.\x1b[0m\n",
+               num_tests - test.num_successes - 1);
+    }
 
     return test.failed;
 }
