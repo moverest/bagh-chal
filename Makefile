@@ -1,4 +1,4 @@
-CCFLAGS=
+CCFLAGS=-std=gnu99
 SRC_DIR=src
 BUILD_DIR=build
 CC=gcc $(CCFLAGS)
