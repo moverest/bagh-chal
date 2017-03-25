@@ -18,6 +18,11 @@ graphics_tb_t *graphics_tb_init();
 // graphics_tb. This way, this module is pluggable.
 void graphics_tb_draw(void *context, state_to_draw_t *state);
 
+// graphics_tb_wait_event waits for an event before continuing.
+// The `event` struct is updated accordingly.
+// This function is used as a callback.
+void graphics_tb_wait_event(void *context, event_t *event);
+
 // graphics_tb_quit terminates the graphic module.
 void graphics_tb_quit(graphics_tb_t *tg);
 

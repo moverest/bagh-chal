@@ -28,6 +28,9 @@ $(BUILD_DIR)/models.o: build_dir
 $(BUILD_DIR)/test.o: build_dir
 	$(CC) -c $(SRC_DIR)/test.c -o $@
 
+$(BUILD_DIR)/ui.o: build_dir
+	$(CC) -c $(SRC_DIR)/ui.c -o $@
+
 $(BUILD_DIR)/test_test: build_dir $(BUILD_DIR)/test.o
 	$(CC) $(BUILD_DIR)/test.o $(SRC_DIR)/test_test.c -o $@
 
