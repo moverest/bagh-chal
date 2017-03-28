@@ -48,6 +48,6 @@ int is_position_possible(possible_positions_t *possible_pos,
                          position_t           position);
 
 void set_possible_position(possible_positions_t *possible_pos,
-                          position_t position, int ok);
+                           position_t position, int ok);
 
 #endif

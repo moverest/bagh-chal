@@ -29,7 +29,7 @@ int test_run(test_function_t test_functions[], size_t num_tests) {
     if (test.failed) {
         puts("\x1b[31m1 failed.\x1b[0m");
         printf("\x1b[33m%d left to be tested.\x1b[0m\n",
-               (int) num_tests - test.num_successes - 1);
+               (int)num_tests - test.num_successes - 1);
     }
 
     return test.failed;

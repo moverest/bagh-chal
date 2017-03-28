@@ -253,6 +253,23 @@ void graphics_tb_draw(void *context, state_to_draw_t *state) {
 }
 
 
+void graphics_tb_wait_event(void *context, event_t *event) {
+    //TODO: Emplement.
+
+    struct tb_event tevent;
+
+    tb_poll_event(&tevent);
+
+    if (tevent.key == TB_KEY_ESC) {
+        event->type = EVENT_QUIT;
+        return;
+    }
+
+    event->type = EVENT_KEY;
+    event->key  = KEY_BACKSPACE;
+}
+
+
 void graphics_tb_quit(graphics_tb_t *tg) {
     tb_shutdown();
     free(tg);

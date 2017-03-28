@@ -13,8 +13,8 @@ all: $(foreach f, test_graphics_tb test_game test_test, $(BUILD_DIR)/$f)
 $(BUILD_DIR)/test_game: build_dir $(foreach f, models.o test.o game.o, $(BUILD_DIR)/$f)
 	$(CC) -o $@ $(SRC_DIR)/test_game.c $(foreach f, models.o test.o game.o, $(BUILD_DIR)/$f)
 
-$(BUILD_DIR)/test_graphics_tb: build_dir $(foreach f, models.o graphics_tb.o, $(BUILD_DIR)/$f)
-	$(CC) $(TERMBOX_FLAG) -o $@ $(SRC_DIR)/test_graphics_tb.c $(foreach f, models.o graphics_tb.o, $(BUILD_DIR)/$f)
+$(BUILD_DIR)/test_graphics_tb: build_dir $(foreach f, models.o graphics_tb.o graphics_test.o, $(BUILD_DIR)/$f)
+	$(CC) $(TERMBOX_FLAG) -o $@ $(SRC_DIR)/test_graphics_tb.c $(foreach f, models.o graphics_tb.o graphics_test.o, $(BUILD_DIR)/$f)
 
 $(BUILD_DIR)/graphics_tb.o: build_dir
 	$(CC) -c $(SRC_DIR)/graphics_tb.c -o $@
@@ -27,6 +27,9 @@ $(BUILD_DIR)/models.o: build_dir
 
 $(BUILD_DIR)/test.o: build_dir
 	$(CC) -c $(SRC_DIR)/test.c -o $@
+
+$(BUILD_DIR)/graphics_test.o: build_dir
+	$(CC) -c $(SRC_DIR)/graphics_test.c -o $@
 
 $(BUILD_DIR)/ui.o: build_dir
 	$(CC) -c $(SRC_DIR)/ui.c -o $@
