@@ -56,11 +56,11 @@ void test_graphics(void                           *context,
     state.board = &board1;
 
     possible_positions_t possible_positions_2 = { {
-                                                      1, 0, 0, 0, 0,
+                                                      1, 0, 0, 0, 1,
                                                       0, 0, 0, 0, 0,
                                                       0, 0, 0, 0, 0,
                                                       0, 0, 0, 0, 0,
-                                                      1, 0, 0, 0, 0
+                                                      1, 0, 0, 0, 1
                                                   } };
     state.possible_positions = possible_positions_2;
 
