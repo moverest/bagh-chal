@@ -8,7 +8,7 @@
 
 /*
  *
- *       a      b      c      d      e
+ *      a      b      c      d      e
  *    0 + ---- + ---- + ---- + ---- +                       < PADDING_ROW
  *      | \    |    / | \    |    / |
  *      |    \ | /    |    \ | /    |       Tiger turn      < TURN_ROW
@@ -16,17 +16,20 @@
  *      |    / | \    |    / | \    |       19 Goats left   < GOAT_LEFT_ROW
  *      | /    |    \ | /    |    \ |       0 Goat eaten    < GOAT_EATEN_ROW
  *    2 + ---- + ---- + ---- + ---- +
- *      | \    |    / | \    |    / |
+ *      | \    |    / | \    |    / |       Message         < MSG_ROW
  *      |    \ | /    |    \ | /    |
  *    3 + ---- + ---- + ---- + ---- +                       <-+ SPACING_ROW
  *      |    / | \    |    / | \    |                         |
  *      | /    |    \ | /    |    \ |                         |
  *    4 + ---- + ---- + ---- + ---- +                       <-+
  *
+ * Move a1 to b1                                            < MOVE_ROW
+ *
  *      ^                    ^      ^       ^
- *      PADDING_COL          +------+       TURN_COL
- *                           SPACING_ROW    GOAT_EATEN_COL
- *                                          GOAT_LEFT_COL
+ *      PADDING_COL          + ---- +       TURN_COL
+ * ^                         SPACING_COL    GOAT_EATEN_COL
+ * MOVE_COL                                 GOAT_LEFT_COL
+ *                                          MSG_COL
  */
 
 #define PADDING_COL                 4
@@ -39,6 +42,8 @@
 #define TURN_COL                    4
 #define MOVE_ROW                    17
 #define MOVE_COL                    1
+#define MSG_ROW                     9
+#define MSG_COL                     40
 
 #define POSSIBLE_POSSITION_COLOR    TB_GREEN
 #define GOAT_COLOR                  TB_CYAN
@@ -61,6 +66,8 @@ graphics_tb_t *graphics_tb_init() {
     if (tb_init()) {
         return NULL;
     }
+
+    tb_select_input_mode(TB_INPUT_ESC | TB_INPUT_MOUSE);
 
     return tg;
 }
@@ -249,24 +256,84 @@ void graphics_tb_draw(void *context, state_to_draw_t *state) {
     draw_cells(state->board);
     draw_possible_positions(&state->possible_positions, state->input);
     draw_input(state);
+    print_str(state->msg, MSG_COL, MSG_ROW);
     tb_present();
 }
 
 
 void graphics_tb_wait_event(void *context, event_t *event) {
-    //TODO: Emplement.
-
     struct tb_event tevent;
+    int             stop = 0;
 
-    tb_poll_event(&tevent);
+    do {
+        tb_poll_event(&tevent);
+        switch (tevent.type) {
+        case TB_EVENT_KEY:
+            event->type = EVENT_KEY;
+            stop        = 1;
+            switch (tevent.key) {
+            case TB_KEY_ENTER:
+                event->key = KEY_ENTER;
+                break;
 
-    if (tevent.key == TB_KEY_ESC) {
-        event->type = EVENT_QUIT;
-        return;
-    }
+            case TB_KEY_ESC:
+                event->type = EVENT_QUIT;
+                event->key  = KEY_ESC;
+                break;
 
-    event->type = EVENT_KEY;
-    event->key  = KEY_BACKSPACE;
+            case TB_KEY_ARROW_UP:
+                event->key = KEY_ARROW_UP;
+                break;
+
+            case TB_KEY_ARROW_DOWN:
+                event->key = KEY_ARROW_DOWN;
+                break;
+
+            case TB_KEY_ARROW_LEFT:
+                event->key = KEY_ARROW_LEFT;
+                break;
+
+            case TB_KEY_ARROW_RIGHT:
+                event->key = KEY_ARROW_RIGHT;
+                break;
+
+            case TB_KEY_BACKSPACE:
+            case TB_KEY_BACKSPACE2:
+                event->key = KEY_BACKSPACE;
+                break;
+
+            default:
+                if (!tevent.key) {
+                    tb_utf8_unicode_to_char(&event->ch, tevent.ch);
+                    event->key = KEY_CH;
+                }
+            }
+            break;
+
+        case TB_EVENT_RESIZE:
+            event->type = EVENT_REDRAW;
+            stop        = 1;
+            break;
+
+        case TB_EVENT_MOUSE: // The user clicked on the board
+            if ((tevent.x <= SPACING_COL * 4 + PADDING_COL) &&
+                (tevent.x >= PADDING_COL) &&
+                (tevent.y <= SPACING_ROW * 4 + PADDING_ROW) &&
+                (tevent.y >= PADDING_ROW) &&
+                (tevent.key == TB_KEY_MOUSE_LEFT)) {
+                int x0 = tevent.x - PADDING_COL;
+                int y0 = tevent.y - PADDING_ROW;
+                if (((x0 % SPACING_COL == 0) || (x0 % SPACING_COL == 1)) &&
+                    (y0 % SPACING_ROW == 0)) { // The user clicked on piece placement on the board
+                    event->type       = EVENT_POSITION;
+                    event->position.c = x0 / SPACING_COL;
+                    event->position.r = y0 / SPACING_ROW;
+                    stop = 1;
+                }
+            }
+            break;
+        }
+    } while (!stop);
 }
 
 

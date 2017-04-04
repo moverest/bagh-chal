@@ -12,16 +12,24 @@ typedef struct {
     mvt_t                input;
     possible_positions_t possible_positions;
     board_t              *board;
+    char                 *msg;
 } state_to_draw_t;
 
 typedef    enum {
     EVENT_KEY,
     EVENT_QUIT,
-    EVENT_POSITION
+    EVENT_POSITION,
+    EVENT_REDRAW
 } event_type_t;
 
 typedef enum {
     KEY_CH,
+    KEY_ESC,
+    KEY_ENTER,
+    KEY_ARROW_UP,
+    KEY_ARROW_DOWN,
+    KEY_ARROW_LEFT,
+    KEY_ARROW_RIGHT,
     KEY_BACKSPACE,
 } keypress_t;
 
