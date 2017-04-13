@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdbool.h>
 
 #include "graphics.h"
@@ -25,17 +26,19 @@
         return false;                                               \
     }                                                               \
 
-#define TEST_EVENT_MOUSE(pos1, pos2)                                                                       \
-    sprintf(state.msg, "Press (%d,%d)", pos1, pos2);                                                       \
-    draw(context, &state);                                                                                 \
-    wait_event(context, &event);                                                                           \
-    if (event.type != EVENT_POSITION) {                                                                    \
-        sprintf(err_msg, "Expected (%d,%d)", pos1, pos2);                                                  \
-        return false;                                                                                      \
-    }                                                                                                      \
-    if (event.position.c != pos1 || event.position.r != pos2) {                                            \
-        sprintf(err_msg, "Expected (%d,%d), got (%d,%d)", pos1, pos2, event.position.c, event.position.r); \
-        return false;                                                                                      \
+#define TEST_EVENT_MOUSE(pos1, pos2)                             \
+    sprintf(state.msg, "Click on %c%d (%d,%d)",                  \
+            (char)pos1 + 'a', pos2, pos1, pos2);                 \
+    draw(context, &state);                                       \
+    wait_event(context, &event);                                 \
+    if (event.type != EVENT_POSITION) {                          \
+        sprintf(err_msg, "Expected (%d,%d)", pos1, pos2);        \
+        return false;                                            \
+    }                                                            \
+    if (event.position.c != pos1 || event.position.r != pos2) {  \
+        sprintf(err_msg, "Expected (%d,%d), got (%d,%d)",        \
+                pos1, pos2, event.position.c, event.position.r); \
+        return false;                                            \
     }
 
 #define WAIT_BEFORE_NEXT_TEST()                                  \
@@ -51,16 +54,20 @@ bool test_graphics(void                           *context,
                    graphics_draw_callback_t       draw,
                    graphics_wait_event_callback_t wait_event,
                    char                           *err_msg) {
-    state_to_draw_t state;
-    event_t         event;
+    game_state_to_draw_t state;
+    game_t               game;
+    event_t              event;
 
-    state.num_goats_to_put = 20;
-    state.num_eaten_goats  = 0;
-    state.turn             = GOAT_TURN;
-    state.input.from.c     = 2;
-    state.input.from.r     = POSITION_NOT_SET;
-    state.input.to.c       = POSITION_NOT_SET;
-    state.input.to.r       = POSITION_NOT_SET;
+    state.game = &game;
+
+
+    game.num_goats_to_put = 20;
+    game.num_eaten_goats  = 0;
+    game.turn             = GOAT_TURN;
+    state.input.from.c    = 2;
+    state.input.from.r    = POSITION_NOT_SET;
+    state.input.to.c      = POSITION_NOT_SET;
+    state.input.to.r      = POSITION_NOT_SET;
     char msg[256] = "";
     state.msg = msg;
 
@@ -71,7 +78,7 @@ bool test_graphics(void                           *context,
                           EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL,
                           TIGER_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, TIGER_CELL
                       } };
-    state.board = &board;
+    memcpy(&game.board, &board, sizeof(game.board));
 
     possible_positions_t possible_positions_1 = { {
                                                       0, 1, 1, 1, 0,
@@ -84,13 +91,13 @@ bool test_graphics(void                           *context,
 
     WAIT_BEFORE_NEXT_TEST();
 
-    state.num_goats_to_put = 19;
-    state.num_eaten_goats  = 0;
-    state.turn             = TIGER_TURN;
-    state.input.from.c     = 0;
-    state.input.from.r     = POSITION_NOT_SET;
-    state.input.to.c       = POSITION_NOT_SET;
-    state.input.to.r       = POSITION_NOT_SET;
+    game.num_goats_to_put = 19;
+    game.num_eaten_goats  = 0;
+    game.turn             = TIGER_TURN;
+    state.input.from.c    = 0;
+    state.input.from.r    = POSITION_NOT_SET;
+    state.input.to.c      = POSITION_NOT_SET;
+    state.input.to.r      = POSITION_NOT_SET;
 
     board_t board1 = { {
                            TIGER_CELL, EMPTY_CELL, GOAT_CELL, EMPTY_CELL, TIGER_CELL,
@@ -99,7 +106,7 @@ bool test_graphics(void                           *context,
                            EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL,
                            TIGER_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, TIGER_CELL
                        } };
-    state.board = &board1;
+    memcpy(&game.board, &board1, sizeof(game.board));
 
     possible_positions_t possible_positions_2 = { {
                                                       1, 0, 0, 0, 1,
@@ -112,13 +119,13 @@ bool test_graphics(void                           *context,
 
     WAIT_BEFORE_NEXT_TEST();
 
-    state.num_goats_to_put = 0;
-    state.num_eaten_goats  = 0;
-    state.turn             = TIGER_TURN;
-    state.input.from.c     = 1;
-    state.input.from.r     = 3;
-    state.input.to.c       = 1;
-    state.input.to.r       = POSITION_NOT_SET;
+    game.num_goats_to_put = 0;
+    game.num_eaten_goats  = 0;
+    game.turn             = TIGER_TURN;
+    state.input.from.c    = 1;
+    state.input.from.r    = 3;
+    state.input.to.c      = 1;
+    state.input.to.r      = POSITION_NOT_SET;
 
     board_t board2 = { {
                            TIGER_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL,
@@ -127,7 +134,7 @@ bool test_graphics(void                           *context,
                            GOAT_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL,
                            TIGER_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL, TIGER_CELL
                        } };
-    state.board = &board2;
+    memcpy(&game.board, &board2, sizeof(game.board));
 
     possible_positions_t possible_positions_3 = { {
                                                       0, 0, 0, 0, 0,
@@ -140,13 +147,13 @@ bool test_graphics(void                           *context,
 
     WAIT_BEFORE_NEXT_TEST();
 
-    state.num_goats_to_put = 0;
-    state.num_eaten_goats  = 4;
-    state.turn             = GOAT_TURN;
-    state.input.from.c     = 3;
-    state.input.from.r     = 2;
-    state.input.to.c       = 3;
-    state.input.to.r       = POSITION_NOT_SET;
+    game.num_goats_to_put = 0;
+    game.num_eaten_goats  = 4;
+    game.turn             = GOAT_TURN;
+    state.input.from.c    = 3;
+    state.input.from.r    = 2;
+    state.input.to.c      = 3;
+    state.input.to.r      = POSITION_NOT_SET;
 
     board_t board3 = { {
                            TIGER_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL, TIGER_CELL,
@@ -155,7 +162,7 @@ bool test_graphics(void                           *context,
                            GOAT_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL,
                            TIGER_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL, TIGER_CELL
                        } };
-    state.board = &board3;
+    memcpy(&game.board, &board3, sizeof(game.board));
 
     possible_positions_t possible_positions_4 = { {
                                                       0, 0, 0, 0, 0,

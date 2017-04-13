@@ -16,7 +16,7 @@ graphics_tb_t *graphics_tb_init();
 // We do not use `graphics_tb_t *tg` but `void *context` because this function
 // is used as a callback and the caller shouldn't have to know about
 // graphics_tb. This way, this module is pluggable.
-void graphics_tb_draw(void *context, state_to_draw_t *state);
+void graphics_tb_draw(void *context, game_state_to_draw_t *state);
 
 // graphics_tb_wait_event waits for an event before continuing.
 // The `event` struct is updated accordingly.

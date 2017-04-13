@@ -165,10 +165,10 @@ static void draw_turn(player_turn_t turn) {
 
 
 // draw_gui writes what is write in it.
-static void draw_gui(state_to_draw_t *state) {
-    draw_turn(state->turn);
-    draw_goat_left(state->num_goats_to_put);
-    draw_goat_eaten(state->num_eaten_goats);
+static void draw_gui(game_state_to_draw_t *state) {
+    draw_turn(state->game->turn);
+    draw_goat_left(state->game->num_goats_to_put);
+    draw_goat_eaten(state->game->num_eaten_goats);
 }
 
 
@@ -219,7 +219,7 @@ static void draw_possible_positions(possible_positions_t *possible_positions,
 
 
 // draw_input draws the input.
-static void draw_input(state_to_draw_t *state) {
+static void draw_input(game_state_to_draw_t *state) {
     int  x = MOVE_COL;
     char inp[4];
 
@@ -228,7 +228,7 @@ static void draw_input(state_to_draw_t *state) {
     inp[2] = state->input.to.c == POSITION_NOT_SET ? ' ' : 'a' + state->input.to.c;
     inp[3] = state->input.to.r == POSITION_NOT_SET ? ' ' : '0' + state->input.to.r;
 
-    if ((state->turn == GOAT_TURN) && (state->num_goats_to_put != 0)) {
+    if ((state->game->turn == GOAT_TURN) && (state->game->num_goats_to_put != 0)) {
         x += print_str("Put ", x, MOVE_ROW);
         for (int i = 0; i < 2 && inp[i] != ' '; i++) {
             tb_change_cell(x, MOVE_ROW, inp[i], INPUT_POS_COLOR, TB_DEFAULT);
@@ -249,11 +249,11 @@ static void draw_input(state_to_draw_t *state) {
 
 
 // graphics_tb_draw draws the whole screen.
-void graphics_tb_draw(void *context, state_to_draw_t *state) {
+void graphics_tb_draw(void *context, game_state_to_draw_t *state) {
     tb_clear();
     draw_board();
     draw_gui(state);
-    draw_cells(state->board);
+    draw_cells(&state->game->board);
     draw_possible_positions(&state->possible_positions, state->input);
     draw_input(state);
     print_str(state->msg, MSG_COL, MSG_ROW);

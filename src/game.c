@@ -1,7 +1,7 @@
 #include "game.h"
 
 game_t *game_new() {
-    game_t *new_game = (game_t *)malloc(sizeof(game_t));
+    game_t *new_game = malloc(sizeof(game_t));
 
     game_reset(new_game);
     return new_game;
@@ -17,20 +17,17 @@ void game_reset(game_t *g) {
     g->num_goats_to_put = 20;
     g->num_eaten_goats  = 0;
 
-    //the goats begin
+    // Goats begin the game
     g->turn = GOAT_TURN;
 
-    //initializes cells, default value : EMPTY_CELL
     position_t cell_id;
-    //Don't touch this
     for (cell_id.r = 0; cell_id.r < 5; cell_id.r++) {
         for (cell_id.c = 0; cell_id.c < 5; cell_id.c++) {
             board_set_cell(&(g->board), cell_id, EMPTY_CELL);
         }
     }
-    //g==&(g->board)
 
-    //sets tigers in the corners
+    // Put tigers at the corners
     board_set_cell(&(g->board), (position_t){0, 0 }, TIGER_CELL);
     board_set_cell(&(g->board), (position_t){0, 4 }, TIGER_CELL);
     board_set_cell(&(g->board), (position_t){4, 0 }, TIGER_CELL);
@@ -38,8 +35,8 @@ void game_reset(game_t *g) {
 }
 
 
-//we're using c99, bool exists
-bool game_possible_movement(game_t *g, position_t from_pos, possible_positions_t *pos, bool erase) {
+bool game_possible_movement(game_t *g, position_t from_pos,
+                            possible_positions_t *pos, bool erase) {
     if (erase) {
         init_positions(pos, false);
     }
@@ -59,10 +56,10 @@ bool game_possible_movement(game_t *g, position_t from_pos, possible_positions_t
                 }
             }
             return movement_possible;
-        } else   {
+        } else {
             if (get_cell(&(g->board), from_pos) != GOAT_CELL) {
                 return false;
-            } else   {
+            } else {
                 position_t top_left  = top_left_cell(from_pos);
                 position_t bot_right = bot_right_cell(from_pos);
 
@@ -83,10 +80,10 @@ bool game_possible_movement(game_t *g, position_t from_pos, possible_positions_t
                 return movement_possible;
             }
         }
-    } else if (g->turn == TIGER_TURN)      {
+    } else if (g->turn == TIGER_TURN) {
         if (get_cell(&(g->board), from_pos) != TIGER_CELL) {
             return false;
-        } else   {
+        } else {
             position_t top_left  = top_left_cell(from_pos);
             position_t bot_right = bot_right_cell(from_pos);
 
@@ -101,7 +98,7 @@ bool game_possible_movement(game_t *g, position_t from_pos, possible_positions_t
                         if ((target_cell == EMPTY_CELL) && (on_same_rowcol(cell_id, from_pos) || has_diagonal(from_pos))) {
                             set_possible_position(pos, cell_id, true);
                             movement_possible = true;
-                        } else if (target_cell == GOAT_CELL)      {
+                        } else if (target_cell == GOAT_CELL) {
                             position_t jump_to = jumpto_cell(from_pos, cell_id);
 
                             //predicate returns false if jump_to is not in board, before calling get_cell

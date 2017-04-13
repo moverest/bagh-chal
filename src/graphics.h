@@ -4,16 +4,14 @@
 #include <stdlib.h>
 
 #include "models.h"
+#include "game.h"
 
 typedef struct {
-    int                  num_goats_to_put;
-    int                  num_eaten_goats;
-    player_turn_t        turn;
+    game_t               *game;
     mvt_t                input;
     possible_positions_t possible_positions;
-    board_t              *board;
     char                 *msg;
-} state_to_draw_t;
+} game_state_to_draw_t;
 
 typedef    enum {
     EVENT_KEY,
@@ -42,7 +40,7 @@ typedef struct {
 
 // graphics_draw_callback_t defines the function to be used as a callback to
 // draw the current state of the game on the screen.
-typedef void (*graphics_draw_callback_t)(void *context, state_to_draw_t *state);
+typedef void (*graphics_draw_callback_t)(void *context, game_state_to_draw_t *state);
 
 // graphics_wait_event_callback_t defines the function to be used as a callback
 // to wait for events.

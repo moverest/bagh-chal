@@ -16,7 +16,6 @@ void test_movable_pawns();
 void test_possible_pos();
 
 int main(int argc, char **argv) {
-    puts("hello, world");
     //test_create_delete(); OK
     //test_in_board(); OK
     //test_diag(); OK
