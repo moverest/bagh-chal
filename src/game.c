@@ -69,8 +69,8 @@ static bool test_possible_position(board_t              *board,
     position_t to_check[]  = {
         { pos.c + 1,           pos.r + diag_offset },
         { pos.c - 1,           pos.r - diag_offset },
-        { pos.c + diag_offset, pos.r + 1           },
-        { pos.c - diag_offset, pos.r - 1           }
+        { pos.c - diag_offset, pos.r + 1           },
+        { pos.c + diag_offset, pos.r - 1           }
     };
 
 
@@ -93,8 +93,8 @@ static bool test_possible_position(board_t              *board,
         position_t jump_to_check[] = {
             { pos.c + 2,           pos.r + diag_offset },
             { pos.c - 2,           pos.r - diag_offset },
-            { pos.c + diag_offset, pos.r + 2           },
-            { pos.c - diag_offset, pos.r - 2           }
+            { pos.c - diag_offset, pos.r + 2           },
+            { pos.c + diag_offset, pos.r - 2           }
         };
 
 
