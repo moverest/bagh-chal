@@ -18,7 +18,7 @@ typedef struct {
 // select. Each position is represented by a boolean. Position r, c is at
 // index r*5+c. A position can be selected if its value is 1. 0 otherwhise.
 typedef struct {
-    char ok[5 * 5];
+    bool ok[5 * 5];
 } possible_positions_t;
 
 // POSITION_NOT_SET is used when a coordinate is not yet set.
@@ -27,8 +27,8 @@ typedef struct {
 #define POSITION_NOT_SET    -1
 
 typedef struct {
-    int r;
     int c;
+    int r;
 } position_t;
 
 // mvt_t represents a movement in the game. When placing a goat on the board,
@@ -47,48 +47,16 @@ typedef enum {
 cell_state_t board_get_cell(board_t *board, position_t position);
 void board_set_cell(board_t *board, position_t position, cell_state_t state);
 
-//same as the 2 previous functions but they use position_t type declared above
-cell_state_t get_cell(board_t *board, position_t cell);
-void set_cell(board_t *board, position_t cell, cell_state_t state);
-
-//a board file might help models being lighter
-
-int is_position_possible(possible_positions_t *possible_pos,
-                         position_t           position);
-
-
+bool is_position_possible(possible_positions_t *possible_pos,
+                          position_t           position);
 void set_possible_position(possible_positions_t *possible_pos,
-                           position_t position, int ok);
+                           position_t position, bool ok);
 
-//sets every value of pos (char[5][5]) to ok value
-void init_positions(possible_positions_t *pos, int ok);
+void reset_possible_positions(possible_positions_t *possible_pos);
 
-//1 if a diagonal goes through p, 0 otherwise
-bool has_diagonal(position_t p);
-
-//only for the square around a cell
-bool on_same_rowcol(position_t p1, position_t p2);
-
-//top left corner of the square around a cell
-position_t top_left_cell(position_t p);
-
-//bottom right corner of the square around a cell
-position_t bot_right_cell(position_t p);
-
-//1 if the cell is in the board, 0 otherwise
-bool in_board(position_t p);
-
-//comparator for position_t
-bool equals_pos_t(position_t p1, position_t p2);
-
-//'jump to cell' would mean an action while jump-to cell refers to the cell we want to jump to
-//returns the symetric cell of tiger with respect to goat
-position_t jumpto_cell(position_t tiger, position_t goat);
-
-//1 if the tiger is going to eat the goat 0 otherwise
-bool tiger_eats(mvt_t *m);
-
-//position of the eaten goat
-position_t eaten_goat_cell(mvt_t *m);
+bool position_is_valid(position_t pos);
+bool position_has_diagonal(position_t pos);
+bool position_equals(position_t pos1, position_t pos2);
+bool mvt_is_diagonal(mvt_t mvt);
 
 #endif

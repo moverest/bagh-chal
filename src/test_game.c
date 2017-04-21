@@ -1,198 +1,316 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "test.h"
 #include "game.h"
 
-void display_pos(possible_positions_t *p);
-void display_board(board_t *b);
+static bool board_equals(board_t *b1, board_t *b2) {
+    position_t pos;
 
-void test_create_delete();
-void test_in_board();
-void test_diag();
-void test_adj();
-void test_top_left();
-void test_bot_right();
-void test_movable_pawns();
-void test_possible_pos();
-
-int main(int argc, char **argv) {
-    //test_create_delete(); OK
-    //test_in_board(); OK
-    //test_diag(); OK
-    //test_adj(); OK
-    //test_top_left(); OK
-    //test_bot_right(); OK
-    test_possible_pos();
-
-    //test_movable_pawns();
-    printf("\n");
-    return 0;
-}
-
-
-void test_create_delete() {
-    game_t *g = game_new();
-
-    game_free(g);
-}
-
-
-void display_board(board_t *b) {
-    for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 5; j++) {
-            printf("%d ", get_cell(b, (position_t){i, j }));
-        }
-        puts("");
-    }
-}
-
-
-void display_pos(possible_positions_t *p) {
-    for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 5; j++) {
-            printf("%d ", is_position_possible(p, (position_t){i, j }));
-        }
-        puts("");
-    }
-}
-
-
-void test_in_board() {
-    position_t p;
-
-    for (p.r = -1; p.r < 6; p.r++) {
-        for (p.c = -1; p.c < 6; p.c++) {
-            printf("\np est pas dans la grille (r=%d , c=%d) :%d", p.r, p.c, in_board(p));
-        }
-    }
-}
-
-
-void test_diag() {
-    position_t p;
-
-    for (p.r = 0; p.r < 5; p.r++) {
-        for (p.c = 0; p.c < 5; p.c++) {
-            printf("\np a une diagonale (r=%d , c=%d) :%d", p.r, p.c, has_diagonal(p));
-        }
-    }
-}
-
-
-void test_adj() {
-    position_t mp;
-
-    mp.r = 3;
-    mp.c = 2;
-    position_t p;
-    printf("\nmp (r=%d , c=%d)", mp.r, mp.c);
-    for (p.r = mp.r - 1; p.r <= mp.r + 1; p.r++) {
-        for (p.c = mp.c - 1; p.c <= mp.c + 1; p.c++) {
-            printf("\np et mp sont adjacentes (r=%d , c=%d) :%d", p.r, p.c, on_same_rowcol(p, mp));
-        }
-    }
-}
-
-
-void test_top_left() {
-    position_t p;
-
-    for (p.r = 0; p.r < 5; p.r++) {
-        for (p.c = 0; p.c < 5; p.c++) {
-            position_t d = top_left_cell(p);
-            printf("\ncellule en haut a gauche de p(r=%d , c=%d) : (%d , %d)", p.r, p.c, d.r, d.c);
-        }
-    }
-}
-
-
-void test_bot_right() {
-    position_t p;
-
-    for (p.r = 0; p.r < 5; p.r++) {
-        for (p.c = 0; p.c < 5; p.c++) {
-            position_t d = bot_right_cell(p);
-            printf("\ncellule en bas a droite de p(r=%d , c=%d) : (%d , %d)", p.r, p.c, d.r, d.c);
-        }
-    }
-}
-
-
-void test_possible_pos() {
-    game_t               *g = game_new();
-    possible_positions_t p;
-    position_t           rd;
-
-    puts("1 goat");
-    g->turn = TIGER_TURN;
-
-    //1st turn goat in cell(0,1)
-    set_cell(&(g->board), (position_t){0, 1 }, GOAT_CELL);
-
-    rd.r = 0;
-    rd.c = 0;
-    printf("top left tiger can move : %d\n", game_possible_movement(g, rd, &p, true));
-    display_pos(&p);
-
-
-    rd.c = 4;
-    printf("top right tiger can move : %d\n", game_possible_movement(g, rd, &p, false));
-
-    rd.r = 4;
-    printf("bot right tiger can move : %d\n", game_possible_movement(g, rd, &p, false));
-
-    rd.c = 0;
-    printf("bot left tiger can move : %d\n", game_possible_movement(g, rd, &p, false));
-
-    puts("possible movements :");
-    display_pos(&p);
-
-
-
-    puts("tiger cornered, board looks like :");
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            if (i + j) {
-                set_cell(&(g->board), (position_t){i, j }, GOAT_CELL);
+    for (pos.r = 0; pos.r < 5; pos.r++) {
+        for (pos.c = 0; pos.c < 5; pos.c++) {
+            if (board_get_cell(b1, pos) != board_get_cell(b2, pos)) {
+                return false;
             }
         }
     }
-    display_board(&(g->board));
 
-    rd.r = 0;
-    rd.c = 0;
-    printf("top left tiger can move : %d\n", game_possible_movement(g, rd, &p, true));
-    display_pos(&p);
-
-
-    rd.c = 4;
-    printf("top right tiger can move : %d\n", game_possible_movement(g, rd, &p, false));
-
-    rd.r = 4;
-    printf("bot right tiger can move : %d\n", game_possible_movement(g, rd, &p, false));
-
-    rd.c = 0;
-    printf("bot left tiger can move : %d\n", game_possible_movement(g, rd, &p, false));
-
-    puts("possible movements :");
-    display_pos(&p);
-
-    puts("top left tiger can escape by eating a goat");
-    set_cell(&(g->board), (position_t){0, 2 }, EMPTY_CELL);
-    display_board((board_t *)g);
-    rd.r = 0;
-    rd.c = 0;
-    printf("top left tiger can move : %d\n", game_possible_movement(g, rd, &p, false));
-    display_pos(&p);
+    return true;
 }
 
 
-void test_movable_pawns() {
-    game_t               *g = game_new();
-    possible_positions_t p;
+static bool game_equals(game_t *g1, game_t *g2) {
+    if (g1->turn != g2->turn) {
+        return false;
+    }
 
-    printf("\nnombre de pions que l'on peut bouger : %d", game_find_movable_pawns(g, &p));
-    g->turn = TIGER_TURN;
-    printf("\nnombre de pions que l'on peut bouger : %d", game_find_movable_pawns(g, &p));
-    game_free(g);
+    if (g1->num_goats_to_put != g2->num_goats_to_put) {
+        return false;
+    }
+
+    if (g1->num_eaten_goats != g2->num_eaten_goats) {
+        return false;
+    }
+
+    if (!board_equals(&g1->board, &g2->board)) {
+        return false;
+    }
+
+
+    return true;
+}
+
+
+static bool possible_positions_equals(possible_positions_t *p1,
+                                      possible_positions_t *p2) {
+    position_t pos;
+
+    for (pos.r = 0; pos.r < 5; pos.r++) {
+        for (pos.c = 0; pos.c < 5; pos.c++) {
+            if (is_position_possible(p1, pos) != is_position_possible(p2, pos)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+
+static void game_print_board(board_t *board) {
+    position_t pos;
+
+    for (pos.r = 0; pos.r < 5; pos.r++) {
+        for (pos.c = 0; pos.c < 5; pos.c++) {
+            switch (board_get_cell(board, pos)) {
+            case TIGER_CELL:
+                printf("T ");
+
+                break;
+
+            case GOAT_CELL:
+                printf("G ");
+                break;
+
+            default:
+                printf(". ");
+            }
+        }
+
+        puts("");
+    }
+}
+
+
+static void game_print(game_t *game) {
+    printf("Turn: %s\n", game->turn == GOAT_TURN ? "GOAT" : "TIGER");
+    printf("Goat to put: %d\n", game->num_goats_to_put);
+    printf("Eaten goats: %d\n", game->num_eaten_goats);
+    game_print_board(&game->board);
+}
+
+
+static void possible_positions_print(possible_positions_t *p) {
+    position_t pos;
+
+    for (pos.r = 0; pos.r < 5; pos.r++) {
+        for (pos.c = 0; pos.c < 5; pos.c++) {
+            bool possible = is_position_possible(p, pos);
+            if (possible) {
+                printf("%d ", possible);
+            } else {
+                printf(". ");
+            }
+        }
+
+        puts("");
+    }
+}
+
+
+#define CHECK_GAME_STATE(game_got, game_expect, line) \
+    if (!game_equals(game_got, game_expect)) {        \
+        printf("## Line: %d\n", line);                \
+        puts("## Expected ##");                       \
+        game_print(game_expect);                      \
+        puts("\n## Got ##");                          \
+        game_print(game_got);                         \
+        test_fail(t);                                 \
+    }                                                 \
+
+#define CHECK_POSSIBLE_POS(pos_got, pos_expected, game_got, line) \
+    if (!possible_positions_equals(pos_got, pos_expected)) {      \
+        printf("## Line: %d\n", line);                            \
+        puts("## Expected ##");                                   \
+        possible_positions_print(pos_expected);                   \
+        puts("\n## Got ##");                                      \
+        possible_positions_print(pos_got);                        \
+        game_print(game_got);                                     \
+        test_fail(t);                                             \
+    }                                                             \
+
+#define CHECK_IMPOSSIBLE_MVT(mvt, game_got, line)                       \
+    if (game_do_mvt(game_got, mvt)) {                                   \
+        printf("## Line: %d\n", line);                                  \
+        game_print(game_got);                                           \
+        printf("Movement %c%d -> %c%d should not be valid.\n",          \
+               'a' + mvt.from.c, mvt.from.r, 'a' + mvt.to.c, mvt.to.r); \
+        test_fail(t);                                                   \
+    }                                                                   \
+
+#define CHECK_IMPOSSIBLE_MVTS(impossible_mvts, game_got, line)  \
+    for (int impossible_mvt_i = 0;                              \
+         impossible_mvt_i < sizeof(impossible_mvts) /           \
+         sizeof(impossible_mvts[0]);                            \
+         impossible_mvt_i++) {                                  \
+        CHECK_IMPOSSIBLE_MVT(impossible_mvts[impossible_mvt_i], \
+                             game_got, __LINE__);               \
+    }                                                           \
+
+static void test_game_begin(test_t *t) {
+    game_t *game = game_new();
+
+    game_t expect_game_1 = {
+        .board            = { {
+                                  TIGER_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, TIGER_CELL,
+                                  EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL,
+                                  EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL,
+                                  EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL,
+                                  TIGER_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, TIGER_CELL
+                              } },
+        .turn             = GOAT_TURN,
+        .num_goats_to_put = 20,
+        .num_eaten_goats  = 0
+    };
+
+    CHECK_GAME_STATE(game, &expect_game_1, __LINE__);
+
+    possible_positions_t expect_possible_from_1 = { {
+                                                        false, true, true, true, false,
+                                                        true, true, true, true, true,
+                                                        true, true, true, true, true,
+                                                        true, true, true, true, true,
+                                                        false, true, true, true, false,
+                                                    } };
+
+
+    possible_positions_t got_possible;
+    game_get_possible_from_positions(game, &got_possible);
+
+    CHECK_POSSIBLE_POS(&got_possible, &expect_possible_from_1,
+                       game, __LINE__);
+
+    mvt_t mvt_1 = { { 1, 0 }, { POSITION_NOT_SET, POSITION_NOT_SET } };
+    game_do_mvt(game, mvt_1);
+
+    game_t expect_game_2 = {
+        .board            = { {
+                                  TIGER_CELL, GOAT_CELL, EMPTY_CELL, EMPTY_CELL, TIGER_CELL,
+                                  EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL,
+                                  EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL,
+                                  EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL,
+                                  TIGER_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, TIGER_CELL
+                              } },
+        .turn             = TIGER_TURN,
+        .num_goats_to_put = 19,
+        .num_eaten_goats  = 0
+    };
+
+    CHECK_GAME_STATE(game, &expect_game_2, __LINE__);
+
+    possible_positions_t expect_possible_from_2 = { {
+                                                        true, false, false, false, true,
+                                                        false, false, false, false, false,
+                                                        false, false, false, false, false,
+                                                        false, false, false, false, false,
+                                                        true, false, false, false, true,
+                                                    } };
+
+    game_get_possible_from_positions(game, &got_possible);
+    CHECK_POSSIBLE_POS(&got_possible, &expect_possible_from_2,
+                       game, __LINE__);
+
+    possible_positions_t expect_possible_to_2_1 = { {
+                                                        false, false, true, false, false,
+                                                        true, true, false, false, false,
+                                                        false, false, false, false, false,
+                                                        false, false, false, false, false,
+                                                        false, false, false, false, false,
+                                                    } };
+
+    game_get_possible_to_positions(game, (position_t){0, 0 }, &got_possible);
+    CHECK_POSSIBLE_POS(&got_possible, &expect_possible_to_2_1,
+                       game, __LINE__);
+
+
+    possible_positions_t expect_possible_to_2_2 = { {
+                                                        false, false, false, false, false,
+                                                        false, false, false, false, false,
+                                                        false, false, false, false, false,
+                                                        false, false, false, true, true,
+                                                        false, false, false, true, false,
+                                                    } };
+
+    game_get_possible_to_positions(game, (position_t){4, 4 }, &got_possible);
+    CHECK_POSSIBLE_POS(&got_possible, &expect_possible_to_2_2,
+                       game, __LINE__);
+
+    mvt_t mvt_2_impossibles[] = {
+        { { 0, 0 }, {  0, 0 } },
+        { { 0, 0 }, {  2, 2 } },
+        { { 0, 0 }, {  0, 2 } },
+        { { 1, 0 }, {  2, 0 } },
+        { { 0, 0 }, { -1, 0 } },
+        { { 0, 0 }, {  3, 0 } }
+    };
+    CHECK_IMPOSSIBLE_MVTS(mvt_2_impossibles, game, __LINE__)
+
+
+    mvt_t mvt_2 = { { 0, 0 }, { 2, 0 } };
+    game_do_mvt(game, mvt_2);
+
+
+    game_t expect_game_3 = {
+        .board            = { {
+                                  EMPTY_CELL, EMPTY_CELL, TIGER_CELL, EMPTY_CELL, TIGER_CELL,
+                                  EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL,
+                                  EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL,
+                                  EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL,
+                                  TIGER_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, TIGER_CELL
+                              } },
+        .turn             = GOAT_TURN,
+        .num_goats_to_put = 19,
+        .num_eaten_goats  = 1
+    };
+    CHECK_GAME_STATE(game, &expect_game_3, __LINE__);
+
+    possible_positions_t expect_possible_from_3 = { {
+                                                        true, true, false, true, false,
+                                                        true, true, true, true, true,
+                                                        true, true, true, true, true,
+                                                        true, true, true, true, true,
+                                                        false, true, true, true, false,
+                                                    } };
+
+    game_get_possible_from_positions(game, &got_possible);
+    CHECK_POSSIBLE_POS(&got_possible, &expect_possible_from_3,
+                       game, __LINE__);
+
+    mvt_t mvt_3_impossibles[] = {
+        { { 2, 0 }, { POSITION_NOT_SET, POSITION_NOT_SET } },
+        { { 4, 0 }, { POSITION_NOT_SET, POSITION_NOT_SET } },
+        { { 0, 4 }, { POSITION_NOT_SET, POSITION_NOT_SET } },
+        { { 4, 4 }, { POSITION_NOT_SET, POSITION_NOT_SET } }
+    };
+
+    CHECK_IMPOSSIBLE_MVTS(mvt_3_impossibles, game, __LINE__);
+
+
+    mvt_t mvt_3 = { { 2, 3 }, { POSITION_NOT_SET, POSITION_NOT_SET } };
+    game_do_mvt(game, mvt_3);
+
+    game_t expect_game_4 = {
+        .board            = { {
+                                  EMPTY_CELL, EMPTY_CELL, TIGER_CELL, EMPTY_CELL, TIGER_CELL,
+                                  EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL,
+                                  EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL,
+                                  EMPTY_CELL, EMPTY_CELL, GOAT_CELL, EMPTY_CELL, EMPTY_CELL,
+                                  TIGER_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, TIGER_CELL
+                              } },
+        .turn             = TIGER_TURN,
+        .num_goats_to_put = 18,
+        .num_eaten_goats  = 1
+    };
+    CHECK_GAME_STATE(game, &expect_game_4, __LINE__);
+
+    game_free(game);
+}
+
+
+int main(int argc, char **argv) {
+    test_function_t tests[] = {
+        TEST_FUNCTION(test_game_begin)
+    };
+
+    return test_run(tests, sizeof(tests) / sizeof(tests[0]));
 }

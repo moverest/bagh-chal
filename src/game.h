@@ -19,19 +19,19 @@ void game_free(game_t *g);
 
 
 
-// game_possible_movement updates the `pos` structure with the
+// game_get_possible_to_positions updates the `pos` structure with the
 // valid to positions given a from position.
-bool game_possible_movement(game_t *g, position_t from_pos,
-                            possible_positions_t *pos, bool erase);
+void game_get_possible_to_positions(game_t *g, position_t from_pos,
+                                    possible_positions_t *pos);
 
-// game_find_movable_pawns updates the `pos` structure with the
+// game_possible_from_positions updates the `pos` structure with the
 // valid from positions.
-int game_find_movable_pawns(game_t *g, possible_positions_t *board);
+void game_get_possible_from_positions(game_t *g, possible_positions_t *pos);
 
 
 // game_do_mvt does the given movement for the current player if valid.
 // Returns 0 if the movement is not feasible. 1 otherwhise.
-bool game_do_mvt(game_t *g, mvt_t *mvt);
+bool game_do_mvt(game_t *g, mvt_t mvt);
 
 // game_is_done returns 0 if the game is still on. 1 if the game is done.
 bool game_is_done(game_t *g);

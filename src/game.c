@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "game.h"
 
 game_t *game_new() {
@@ -20,146 +22,287 @@ void game_reset(game_t *g) {
     // Goats begin the game
     g->turn = GOAT_TURN;
 
-    position_t cell_id;
-    for (cell_id.r = 0; cell_id.r < 5; cell_id.r++) {
-        for (cell_id.c = 0; cell_id.c < 5; cell_id.c++) {
-            board_set_cell(&(g->board), cell_id, EMPTY_CELL);
+    // Clear the board
+    position_t pos;
+    for (pos.r = 0; pos.r < 5; pos.r++) {
+        for (pos.c = 0; pos.c < 5; pos.c++) {
+            board_set_cell(&(g->board), pos, EMPTY_CELL);
         }
     }
 
-    // Put tigers at the corners
-    board_set_cell(&(g->board), (position_t){0, 0 }, TIGER_CELL);
-    board_set_cell(&(g->board), (position_t){0, 4 }, TIGER_CELL);
-    board_set_cell(&(g->board), (position_t){4, 0 }, TIGER_CELL);
-    board_set_cell(&(g->board), (position_t){4, 4 }, TIGER_CELL);
+    // Put tigers in the corners
+    board_set_cell(&g->board, (position_t){0, 0 }, TIGER_CELL);
+    board_set_cell(&g->board, (position_t){0, 4 }, TIGER_CELL);
+    board_set_cell(&g->board, (position_t){4, 0 }, TIGER_CELL);
+    board_set_cell(&g->board, (position_t){4, 4 }, TIGER_CELL);
 }
 
 
-bool game_possible_movement(game_t *g, position_t from_pos,
-                            possible_positions_t *pos, bool erase) {
-    if (erase) {
-        init_positions(pos, false);
-    }
+// test_possible_position tests from a given position if a move can be done.
+// If possible_dest is set, then if the token can be moved to the given postion
+// then the destination is maked as possible.
+//
+// If test_diagonals is set to true, we only care about the diagonals. Meaning
+// top-left, top-right, bottom_left and bottom-right.
+// Otherwhise, we only look at the top, bottom, left and right positions.
+//
+// Returns true a movement is possible.
+static bool test_possible_position(board_t *board, position_t pos, bool test_diagonals,
+                                   possible_positions_t *possible_dest) {
+    int mvt_possible = false;
 
-    bool movement_possible = false;
 
-    if (g->turn == GOAT_TURN) {
-        if (g->num_goats_to_put > 0) {
-            position_t cell_id;
+    /*   not test_diagonals     |      test_diagonals
+     *     .    +    .          |        +    .    +
+     *          |               |          \     /
+     *     + -- O -- +          |        .    O    .
+     *          |               |          /     \
+     *     .    +   .           |        +         +
+     *
+     *  . not tested
+     *  + tested
+     */
 
-            for (cell_id.r = 0; cell_id.r < 5; cell_id.r++) {
-                for (cell_id.c = 0; cell_id.c < 5; cell_id.c++) {
-                    if (board_get_cell(&(g->board), cell_id) == EMPTY_CELL) {
-                        set_possible_position(pos, cell_id, true);
-                        movement_possible = true;
-                    }
-                }
-            }
-            return movement_possible;
-        } else {
-            if (get_cell(&(g->board), from_pos) != GOAT_CELL) {
-                return false;
+    int        diag_offset = test_diagonals ? 1 : 0;
+    position_t to_check[]  = {
+        { pos.c + 1,           pos.r + diag_offset },
+        { pos.c - 1,           pos.r - diag_offset },
+        { pos.c + diag_offset, pos.r + 1           },
+        { pos.c - diag_offset, pos.r - 1           }
+    };
+
+
+    for (int i = 0; i < sizeof(to_check) / sizeof(to_check[0]); i++) {
+        if (position_is_valid(to_check[i]) &&
+            (board_get_cell(board, to_check[i]) == EMPTY_CELL)) {
+            if (possible_dest == NULL) {
+                return true;
             } else {
-                position_t top_left  = top_left_cell(from_pos);
-                position_t bot_right = bot_right_cell(from_pos);
-
-                position_t cell_id;
-
-                //looks in the square around from_pos
-                for (cell_id.r = top_left.r; cell_id.r <= bot_right.r; cell_id.r++) {
-                    for (cell_id.c = top_left.c; cell_id.c <= bot_right.c; cell_id.c++) {
-                        if (!equals_pos_t(cell_id, from_pos)) {
-                            if ((get_cell(&(g->board), cell_id) == EMPTY_CELL) && (on_same_rowcol(cell_id, from_pos) || has_diagonal(from_pos))) {
-                                set_possible_position(pos, cell_id, true);
-                                movement_possible = true;
-                            }
-                        }
-                    }
-                }
-
-                return movement_possible;
+                set_possible_position(possible_dest, to_check[i], true);
+                mvt_possible = true;
             }
         }
-    } else if (g->turn == TIGER_TURN) {
-        if (get_cell(&(g->board), from_pos) != TIGER_CELL) {
-            return false;
+    }
+
+    if (board_get_cell(board, pos) == TIGER_CELL) {
+        // We have a tiger, so we can jump and eat other goats.
+
+        int        diag_offset     = test_diagonals ? 2 : 0;
+        position_t jump_to_check[] = {
+            { pos.c + 2,           pos.r + diag_offset },
+            { pos.c - 2,           pos.r - diag_offset },
+            { pos.c + diag_offset, pos.r + 2           },
+            { pos.c - diag_offset, pos.r - 2           }
+        };
+
+
+        for (int i = 0; i < sizeof(to_check) / sizeof(to_check[0]); i++) {
+            if (position_is_valid(to_check[i]) &&
+                (board_get_cell(board, jump_to_check[i]) == EMPTY_CELL) &&
+                (board_get_cell(board, to_check[i]) == GOAT_CELL)) {
+                if (possible_dest == NULL) {
+                    return true;
+                } else {
+                    set_possible_position(possible_dest, jump_to_check[i], true);
+                    mvt_possible = true;
+                }
+            }
+        }
+    }
+
+    return mvt_possible;
+}
+
+
+static void mark_possible_movable_from_positions(board_t *board,
+                                                 possible_positions_t *possible_positions, player_turn_t turn) {
+    cell_state_t movable_cell = turn == TIGER_TURN ? TIGER_CELL : GOAT_CELL;
+
+    position_t pos;
+
+    for (pos.c = 0; pos.c < 5; pos.c++) {
+        for (pos.r = 0; pos.r < 5; pos.r++) {
+            if (board_get_cell(board, pos) == movable_cell) {
+                bool movable = test_possible_position(board, pos, false, NULL);
+                if (position_has_diagonal(pos)) {
+                    movable |= test_possible_position(board, pos, true, NULL);
+                }
+
+                set_possible_position(possible_positions, pos, movable);
+            }
+        }
+    }
+}
+
+
+static void mark_possible_movable_to_positons(board_t *board, position_t from_pos,
+                                              possible_positions_t *possible_positions, player_turn_t turn) {
+    cell_state_t movable_cell = turn == TIGER_TURN ? TIGER_CELL : GOAT_CELL;
+
+    if (board_get_cell(board, from_pos) == movable_cell) {
+        test_possible_position(board, from_pos, false, possible_positions);
+        if (position_has_diagonal(from_pos)) {
+            test_possible_position(board, from_pos, true, possible_positions);
+        }
+    }
+}
+
+
+static void mark_empty_positions(board_t *board, possible_positions_t *possible_pos) {
+    position_t pos;
+
+    for (pos.c = 0; pos.c < 5; pos.c++) {
+        for (pos.r = 0; pos.r < 5; pos.r++) {
+            if (board_get_cell(board, pos) == EMPTY_CELL) {
+                set_possible_position(possible_pos, pos, true);
+            }
+        }
+    }
+}
+
+
+void game_get_possible_from_positions(game_t               *game,
+                                      possible_positions_t *possible_pos) {
+    reset_possible_positions(possible_pos);
+    switch (game->turn) {
+    case TIGER_TURN:
+        mark_possible_movable_from_positions(&game->board,
+                                             possible_pos,
+                                             game->turn);
+        break;
+
+    case GOAT_TURN:
+        if (game->num_goats_to_put == 0) {
+            mark_possible_movable_from_positions(&game->board,
+                                                 possible_pos,
+                                                 game->turn);
         } else {
-            position_t top_left  = top_left_cell(from_pos);
-            position_t bot_right = bot_right_cell(from_pos);
+            mark_empty_positions(&game->board,
+                                 possible_pos);
+        }
+    }
+}
 
-            position_t   cell_id;
-            cell_state_t target_cell;
 
-            //looks in the square around from_pos
-            for (cell_id.r = top_left.r; cell_id.r <= bot_right.r; cell_id.r++) {
-                for (cell_id.c = top_left.c; cell_id.c <= bot_right.c; cell_id.c++) {
-                    if (!equals_pos_t(cell_id, from_pos)) {
-                        target_cell = get_cell(&(g->board), cell_id);
-                        if ((target_cell == EMPTY_CELL) && (on_same_rowcol(cell_id, from_pos) || has_diagonal(from_pos))) {
-                            set_possible_position(pos, cell_id, true);
-                            movement_possible = true;
-                        } else if (target_cell == GOAT_CELL) {
-                            position_t jump_to = jumpto_cell(from_pos, cell_id);
+void game_get_possible_to_positions(game_t *game, position_t from_pos,
+                                    possible_positions_t *possible_pos) {
+    reset_possible_positions(possible_pos);
+    mark_possible_movable_to_positons(&game->board, from_pos,
+                                      possible_pos, game->turn);
+}
 
-                            //predicate returns false if jump_to is not in board, before calling get_cell
-                            if (in_board(jump_to) && (get_cell(&(g->board), jump_to) == EMPTY_CELL)) {
-                                set_possible_position(pos, jump_to, true);
-                                movement_possible = true;
-                            }
-                        }
+
+#define MAX(x, y)    x > y ? x : y
+
+bool game_do_mvt(game_t *game, mvt_t mvt) {
+    if (!position_is_valid(mvt.from)) {
+        return false;
+    }
+
+    if ((game->turn == GOAT_TURN) && (game->num_goats_to_put > 0)) {
+        // We are placing a goat.
+
+        if (board_get_cell(&game->board, mvt.from) != EMPTY_CELL) {
+            return false;
+        }
+
+        board_set_cell(&game->board, mvt.from, GOAT_CELL);
+        game->num_goats_to_put--;
+        game->turn = TIGER_TURN;
+        return true;
+    }
+
+    // From this point on, we are moving a token.
+
+    if (!position_is_valid(mvt.to) || position_equals(mvt.from, mvt.to)) {
+        return false;
+    }
+
+    if ((board_get_cell(&game->board, mvt.from) == EMPTY_CELL) ||
+        (board_get_cell(&game->board, mvt.to) != EMPTY_CELL)) {
+        return false;
+    }
+
+    if (!position_has_diagonal(mvt.to) && mvt_is_diagonal(mvt)) {
+        return false;
+    }
+
+    switch (MAX(abs(mvt.to.c - mvt.from.c), abs(mvt.to.r - mvt.from.r))) {
+    case 1:
+        // We are not eating a goat, just moving a token to the nearest
+        // position.
+        ;
+
+        cell_state_t cell_state_to_move = board_get_cell(&game->board, mvt.from);
+        if (((cell_state_to_move == TIGER_CELL) && (game->turn != TIGER_TURN)) ||
+            ((cell_state_to_move == GOAT_CELL) && (game->turn != GOAT_TURN))) {
+            return false;
+        }
+
+        board_set_cell(&game->board, mvt.from, EMPTY_CELL);
+        board_set_cell(&game->board, mvt.to, cell_state_to_move);
+        game->turn = game->turn == GOAT_TURN ? TIGER_TURN : GOAT_TURN;
+        return true;
+
+    case 2:     // We are eating a goat.
+        if ((game->turn != TIGER_TURN) ||
+            (board_get_cell(&game->board, mvt.from) != TIGER_CELL)) {
+            return false;
+        }
+
+        position_t eaten_goat_pos = {
+            (mvt.to.c + mvt.from.c) / 2,
+            (mvt.to.r + mvt.from.r) / 2
+        };
+
+        if (board_get_cell(&game->board, eaten_goat_pos) != GOAT_CELL) {
+            return false;
+        }
+
+        board_set_cell(&game->board, mvt.from, EMPTY_CELL);
+        board_set_cell(&game->board, eaten_goat_pos, EMPTY_CELL);
+        board_set_cell(&game->board, mvt.to, TIGER_CELL);
+        game->num_eaten_goats++;
+        game->turn = GOAT_TURN;
+        return true;
+    }
+
+    return false;
+}
+
+
+static bool is_blocked(board_t *board, player_turn_t turn) {
+    cell_state_t movable_cell = turn == TIGER_TURN ? TIGER_CELL : GOAT_CELL;
+
+    position_t pos;
+
+    for (pos.c = 0; pos.c < 5; pos.c++) {
+        for (pos.r = 0; pos.r < 5; pos.r++) {
+            if (board_get_cell(board, pos) == movable_cell) {
+                if (test_possible_position(board, pos, false, NULL)) {
+                    return false;
+                }
+                if (position_has_diagonal(pos)) {
+                    if (test_possible_position(board, pos, true, NULL)) {
+                        return false;
                     }
                 }
             }
-            return movement_possible;
         }
     }
 
-    //default value in case algorithm doesn't work
+    return true;
+}
+
+
+bool game_is_done(game_t *game) {
+    if (game->num_eaten_goats > 4) {
+        return true;
+    }
+
+    if (is_blocked(&game->board, game->turn)) {
+        return true;
+    }
+
     return false;
-}
-
-
-int game_find_movable_pawns(game_t *g, possible_positions_t *pos) {
-    int movable_pawns = 0;
-    possible_positions_t mute_pos;
-
-    init_positions(pos, false);
-
-    position_t cell_id;
-    for (cell_id.r = 0; cell_id.r < 5; cell_id.r++) {
-        for (cell_id.c = 0; cell_id.c < 5; cell_id.c++) {
-            if (game_possible_movement(g, cell_id, &mute_pos, false)) {
-                set_possible_position(pos, cell_id, true);
-                movable_pawns++;
-            }
-        }
-    }
-
-    if ((g->turn == GOAT_TURN) && (g->num_goats_to_put > 0)) {
-        return 1;
-    }
-    return movable_pawns;
-}
-
-
-bool game_do_movement(game_t *g, mvt_t *mvt) {
-    possible_positions_t target_cells;
-
-    if (game_possible_movement(g, mvt->from, &target_cells, true)) {
-        if (is_position_possible(&target_cells, mvt->to)) {
-            if (tiger_eats(mvt)) {
-                set_cell(&(g->board), eaten_goat_cell(mvt), EMPTY_CELL);
-            }
-            set_cell(&(g->board), mvt->to, get_cell(&(g->board), mvt->from));
-            set_cell(&(g->board), mvt->from, EMPTY_CELL);
-        }
-    }
-    return false;
-}
-
-
-bool game_is_done(game_t *g) {
-    possible_positions_t board;
-
-    return (g->turn == TIGER_TURN && game_find_movable_pawns(g, &board) == 0) || (g->num_eaten_goats >= 5);
 }
