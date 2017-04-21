@@ -52,5 +52,5 @@ bool position_equals(position_t pos1, position_t pos2) {
 
 
 bool mvt_is_diagonal(mvt_t mvt) {
-    return abs(mvt.to.c - mvt.from.c) == abs(mvt.to.r - mvt.to.r);
+    return abs(mvt.to.c - mvt.from.c) == abs(mvt.to.r - mvt.from.r);
 }

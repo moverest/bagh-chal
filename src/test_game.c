@@ -303,6 +303,23 @@ static void test_game_begin(test_t *t) {
     };
     CHECK_GAME_STATE(game, &expect_game_4, __LINE__);
 
+    mvt_t mvt_4 = { { 4, 0 }, { 4, 1 } };
+    game_do_mvt(game, mvt_4);
+
+    game_t expect_game_5 = {
+        .board            = { {
+                                  EMPTY_CELL, EMPTY_CELL, TIGER_CELL, EMPTY_CELL, EMPTY_CELL,
+                                  EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, TIGER_CELL,
+                                  EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL,
+                                  EMPTY_CELL, EMPTY_CELL, GOAT_CELL, EMPTY_CELL, EMPTY_CELL,
+                                  TIGER_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, TIGER_CELL
+                              } },
+        .turn             = GOAT_TURN,
+        .num_goats_to_put = 18,
+        .num_eaten_goats  = 1
+    };
+    CHECK_GAME_STATE(game, &expect_game_5, __LINE__);
+
     game_free(game);
 }
 

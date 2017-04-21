@@ -47,7 +47,9 @@ void game_reset(game_t *g) {
 // Otherwhise, we only look at the top, bottom, left and right positions.
 //
 // Returns true a movement is possible.
-static bool test_possible_position(board_t *board, position_t pos, bool test_diagonals,
+static bool test_possible_position(board_t              *board,
+                                   position_t           pos,
+                                   bool                 test_diagonals,
                                    possible_positions_t *possible_dest) {
     int mvt_possible = false;
 
@@ -114,8 +116,9 @@ static bool test_possible_position(board_t *board, position_t pos, bool test_dia
 }
 
 
-static void mark_possible_movable_from_positions(board_t *board,
-                                                 possible_positions_t *possible_positions, player_turn_t turn) {
+static void mark_possible_movable_from_positions(board_t              *board,
+                                                 possible_positions_t *possible_positions,
+                                                 player_turn_t        turn) {
     cell_state_t movable_cell = turn == TIGER_TURN ? TIGER_CELL : GOAT_CELL;
 
     position_t pos;
@@ -136,7 +139,8 @@ static void mark_possible_movable_from_positions(board_t *board,
 
 
 static void mark_possible_movable_to_positons(board_t *board, position_t from_pos,
-                                              possible_positions_t *possible_positions, player_turn_t turn) {
+                                              possible_positions_t *possible_positions,
+                                              player_turn_t turn) {
     cell_state_t movable_cell = turn == TIGER_TURN ? TIGER_CELL : GOAT_CELL;
 
     if (board_get_cell(board, from_pos) == movable_cell) {
@@ -300,7 +304,7 @@ bool game_is_done(game_t *game) {
         return true;
     }
 
-    if (is_blocked(&game->board, game->turn)) {
+    if (is_blocked(&game->board, TIGER_TURN)) {
         return true;
     }
 
