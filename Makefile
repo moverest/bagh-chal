@@ -8,13 +8,16 @@ TERMBOX_FLAG=-ltermbox
 debug: CCFLAGS += -DDEBUG -g -Wall
 debug: all
 
-all: $(foreach f, test_graphics_tb test_game test_test, $(BUILD_DIR)/$f)
+all: $(foreach f, test_graphics_tb test_game test_test main_tb, $(BUILD_DIR)/$f)
 
 $(BUILD_DIR)/test_game: $(BUILD_DIR) $(foreach f, models.o test.o game.o, $(BUILD_DIR)/$f)
 	$(CC) -o $@ $(SRC_DIR)/test_game.c $(foreach f, models.o test.o game.o, $(BUILD_DIR)/$f)
 
 $(BUILD_DIR)/test_graphics_tb: $(BUILD_DIR) $(foreach f, models.o graphics_tb.o graphics_test.o, $(BUILD_DIR)/$f)
 	$(CC) $(TERMBOX_FLAG) -o $@ $(SRC_DIR)/test_graphics_tb.c $(foreach f, models.o graphics_tb.o graphics_test.o, $(BUILD_DIR)/$f)
+
+$(BUILD_DIR)/main_tb: $(BUILD_DIR) $(foreach f, graphics_tb.o ui.o game.o models.o, $(BUILD_DIR)/$f)
+	$(CC) $(TERMBOX_FLAG) $(SRC_DIR)/main_tb.c  $(foreach f, graphics_tb.o ui.o game.o models.o, $(BUILD_DIR)/$f) -o $@
 
 $(BUILD_DIR)/graphics_tb.o: $(BUILD_DIR)
 	$(CC) -c $(SRC_DIR)/graphics_tb.c -o $@
