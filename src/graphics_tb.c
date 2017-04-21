@@ -32,29 +32,30 @@
  *                                          MSG_COL
  */
 
-#define PADDING_COL                 4
-#define PADDING_ROW                 2
-#define GOAT_EATEN_ROW              40
-#define GOAT_EATEN_COL              7
-#define GOAT_LEFT_ROW               40
-#define GOAT_LEFT_COL               6
-#define TURN_ROW                    40
-#define TURN_COL                    4
-#define MOVE_ROW                    17
-#define MOVE_COL                    1
-#define MSG_ROW                     9
-#define MSG_COL                     40
+#define PADDING_COL                            4
+#define PADDING_ROW                            2
+#define GOAT_EATEN_ROW                         40
+#define GOAT_EATEN_COL                         7
+#define GOAT_LEFT_ROW                          40
+#define GOAT_LEFT_COL                          6
+#define TURN_ROW                               40
+#define TURN_COL                               4
+#define MOVE_ROW                               17
+#define MOVE_COL                               1
+#define MSG_ROW                                9
+#define MSG_COL                                40
 
-#define POSSIBLE_POSSITION_COLOR    TB_GREEN
-#define GOAT_COLOR                  TB_CYAN
-#define TIGER_COLOR                 TB_RED
-#define EMPTY_COLOR                 TB_DEFAULT
-#define INPUT_POS_COLOR             TB_YELLOW
-#define SELECTION_COLOR             TB_YELLOW
+#define POSSIBLE_POSSITION_TIGER_TURN_COLOR    TB_MAGENTA
+#define POSSIBLE_POSSITION_GOAT_TURN_COLOR     TB_GREEN
+#define GOAT_COLOR                             TB_CYAN
+#define TIGER_COLOR                            TB_RED
+#define EMPTY_COLOR                            TB_DEFAULT
+#define INPUT_POS_COLOR                        TB_YELLOW
+#define SELECTION_COLOR                        TB_YELLOW
 
 
-#define SPACING_COL                 7
-#define SPACING_ROW                 3
+#define SPACING_COL                            7
+#define SPACING_ROW                            3
 
 graphics_tb_t *graphics_tb_init() {
     graphics_tb_t *tg = malloc(sizeof(graphics_tb_t));
@@ -175,7 +176,8 @@ static void draw_gui(game_state_to_draw_t *state) {
 // draw_possible_positions writes the possible possible_positions on the board
 // with their label (their coordinates).
 static void draw_possible_positions(possible_positions_t *possible_positions,
-                                    mvt_t                input) {
+                                    mvt_t                input,
+                                    player_turn_t        turn) {
     int selected_col = POSITION_NOT_SET;
 
     if ((input.from.c != POSITION_NOT_SET) && (input.from.r == POSITION_NOT_SET)) {
@@ -183,6 +185,9 @@ static void draw_possible_positions(possible_positions_t *possible_positions,
     } else if ((input.to.c != POSITION_NOT_SET) && (input.to.r == POSITION_NOT_SET)) {
         selected_col = input.to.c;
     }
+
+    uint16_t possible_position_color = turn == TIGER_TURN ?
+                                       POSSIBLE_POSSITION_TIGER_TURN_COLOR : POSSIBLE_POSSITION_GOAT_TURN_COLOR;
 
     position_t pos;
     for (pos.r = 0; pos.r < 5; pos.r++) {
@@ -198,19 +203,19 @@ static void draw_possible_positions(possible_positions_t *possible_positions,
                 tb_change_cell(SPACING_COL * pos.c + PADDING_COL,
                                SPACING_ROW * pos.r + PADDING_ROW,
                                'a' + pos.c,
-                               POSSIBLE_POSSITION_COLOR,
+                               possible_position_color,
                                TB_DEFAULT);
 
                 tb_change_cell(SPACING_COL * pos.c + PADDING_COL + 1,
                                SPACING_ROW * pos.r + PADDING_ROW,
                                pos.r + '0',
-                               POSSIBLE_POSSITION_COLOR,
+                               possible_position_color,
                                TB_DEFAULT);
 
                 tb_change_cell(SPACING_COL * pos.c + PADDING_COL + 2,
                                SPACING_ROW * pos.r + PADDING_ROW,
                                ' ',
-                               POSSIBLE_POSSITION_COLOR,
+                               possible_position_color,
                                TB_DEFAULT);
             }
         }
@@ -229,7 +234,7 @@ static void draw_input(game_state_to_draw_t *state) {
     inp[3] = state->input.to.r == POSITION_NOT_SET ? ' ' : '0' + state->input.to.r;
 
     if ((state->game->turn == GOAT_TURN) && (state->game->num_goats_to_put != 0)) {
-        x += print_str("Put ", x, MOVE_ROW);
+        x += print_str("Put to ", x, MOVE_ROW);
         for (int i = 0; i < 2 && inp[i] != ' '; i++) {
             tb_change_cell(x, MOVE_ROW, inp[i], INPUT_POS_COLOR, TB_DEFAULT);
             x++;
@@ -254,7 +259,8 @@ void graphics_tb_draw(void *context, game_state_to_draw_t *state) {
     draw_board();
     draw_gui(state);
     draw_cells(&state->game->board);
-    draw_possible_positions(&state->possible_positions, state->input);
+    draw_possible_positions(&state->possible_positions, state->input,
+                            state->game->turn);
     draw_input(state);
     print_str(state->msg, MSG_COL, MSG_ROW);
     tb_present();
