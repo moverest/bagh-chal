@@ -118,26 +118,25 @@ static int print_str(char *str, int col, int row) {
 }
 
 
-#define BOARD_TXT_PADDING_COL    PADDING_COL - 2
+#define BOARD_TXT_PADDING_COL    PADDING_COL
 
 // draw_board draws a blanc board.
 static void draw_board() {
-    int i = PADDING_ROW - 1;
+    int i = PADDING_ROW;
 
-    print_str("  a      b      c      d      e", BOARD_TXT_PADDING_COL, i++);
-    print_str("0 + ---- + ---- + ---- + ---- +", BOARD_TXT_PADDING_COL, i++);
-    print_str("  | \\    |    / | \\    |    / |", BOARD_TXT_PADDING_COL, i++);
-    print_str("  |    \\ | /    |    \\ | /    |", BOARD_TXT_PADDING_COL, i++);
-    print_str("1 + ---- + ---- + ---- + ---- +", BOARD_TXT_PADDING_COL, i++);
-    print_str("  |    / | \\    |    / | \\    |", BOARD_TXT_PADDING_COL, i++);
-    print_str("  | /    |    \\ | /    |    \\ |", BOARD_TXT_PADDING_COL, i++);
-    print_str("2 + ---- + ---- + ---- + ---- +", BOARD_TXT_PADDING_COL, i++);
-    print_str("  | \\    |    / | \\    |    / |", BOARD_TXT_PADDING_COL, i++);
-    print_str("  |    \\ | /    |    \\ | /    |", BOARD_TXT_PADDING_COL, i++);
-    print_str("3 + ---- + ---- + ---- + ---- +", BOARD_TXT_PADDING_COL, i++);
-    print_str("  |    / | \\    |    / | \\    |", BOARD_TXT_PADDING_COL, i++);
-    print_str("  | /    |    \\ | /    |    \\ |", BOARD_TXT_PADDING_COL, i++);
-    print_str("4 + ---- + ---- + ---- + ---- +", BOARD_TXT_PADDING_COL, i++);
+    print_str("+ ---- + ---- + ---- + ---- +", BOARD_TXT_PADDING_COL, i++);
+    print_str("| \\    |    / | \\    |    / |", BOARD_TXT_PADDING_COL, i++);
+    print_str("|    \\ | /    |    \\ | /    |", BOARD_TXT_PADDING_COL, i++);
+    print_str("+ ---- + ---- + ---- + ---- +", BOARD_TXT_PADDING_COL, i++);
+    print_str("|    / | \\    |    / | \\    |", BOARD_TXT_PADDING_COL, i++);
+    print_str("| /    |    \\ | /    |    \\ |", BOARD_TXT_PADDING_COL, i++);
+    print_str("+ ---- + ---- + ---- + ---- +", BOARD_TXT_PADDING_COL, i++);
+    print_str("| \\    |    / | \\    |    / |", BOARD_TXT_PADDING_COL, i++);
+    print_str("|    \\ | /    |    \\ | /    |", BOARD_TXT_PADDING_COL, i++);
+    print_str("+ ---- + ---- + ---- + ---- +", BOARD_TXT_PADDING_COL, i++);
+    print_str("|    / | \\    |    / | \\    |", BOARD_TXT_PADDING_COL, i++);
+    print_str("| /    |    \\ | /    |    \\ |", BOARD_TXT_PADDING_COL, i++);
+    print_str("+ ---- + ---- + ---- + ---- +", BOARD_TXT_PADDING_COL, i++);
 }
 
 
@@ -202,19 +201,7 @@ static void draw_possible_positions(possible_positions_t *possible_positions,
                        is_position_possible(possible_positions, pos)) {
                 tb_change_cell(SPACING_COL * pos.c + PADDING_COL,
                                SPACING_ROW * pos.r + PADDING_ROW,
-                               'a' + pos.c,
-                               possible_position_color,
-                               TB_DEFAULT);
-
-                tb_change_cell(SPACING_COL * pos.c + PADDING_COL + 1,
-                               SPACING_ROW * pos.r + PADDING_ROW,
-                               pos.r + '0',
-                               possible_position_color,
-                               TB_DEFAULT);
-
-                tb_change_cell(SPACING_COL * pos.c + PADDING_COL + 2,
-                               SPACING_ROW * pos.r + PADDING_ROW,
-                               ' ',
+                               position_get_tag(pos),
                                possible_position_color,
                                TB_DEFAULT);
             }
@@ -225,30 +212,27 @@ static void draw_possible_positions(possible_positions_t *possible_positions,
 
 // draw_input draws the input.
 static void draw_input(game_state_to_draw_t *state) {
-    int  x = MOVE_COL;
-    char inp[4];
+    int  x             = MOVE_COL;
+    bool placing_goats = (state->game->turn == GOAT_TURN) &&
+                         (state->game->num_goats_to_put != 0);
 
-    inp[0] = state->input.from.c == POSITION_NOT_SET ? ' ' : 'a' + state->input.from.c;
-    inp[1] = state->input.from.r == POSITION_NOT_SET ? ' ' : '0' + state->input.from.r;
-    inp[2] = state->input.to.c == POSITION_NOT_SET ? ' ' : 'a' + state->input.to.c;
-    inp[3] = state->input.to.r == POSITION_NOT_SET ? ' ' : '0' + state->input.to.r;
+    x += print_str(placing_goats ? "Put to " : "Move ", x, MOVE_ROW);
 
-    if ((state->game->turn == GOAT_TURN) && (state->game->num_goats_to_put != 0)) {
-        x += print_str("Put to ", x, MOVE_ROW);
-        for (int i = 0; i < 2 && inp[i] != ' '; i++) {
-            tb_change_cell(x, MOVE_ROW, inp[i], INPUT_POS_COLOR, TB_DEFAULT);
-            x++;
-        }
-    } else {
-        x += print_str("Move ", x, MOVE_ROW);
-        for (int i = 0; i < 4 && inp[i] != ' '; i++) {
-            tb_change_cell(x, MOVE_ROW, inp[i], INPUT_POS_COLOR, TB_DEFAULT);
-            x++;
-            if ((i == 1)) {
-                x += print_str(" to ", x, MOVE_ROW);
-            }
+    if (position_is_set(state->input.from)) {
+        tb_change_cell(x, MOVE_ROW, position_get_tag(state->input.from),
+                       INPUT_POS_COLOR, TB_DEFAULT);
+        x++;
+
+        if (!placing_goats) {
+            x += print_str(" to ", x, MOVE_ROW);
         }
     }
+
+    if (position_is_set(state->input.to)) {
+        tb_change_cell(x, MOVE_ROW, position_get_tag(state->input.to),
+                       INPUT_POS_COLOR, TB_DEFAULT);
+    }
+
     tb_set_cursor(x, MOVE_ROW);
 }
 
@@ -329,8 +313,8 @@ void graphics_tb_wait_event(void *context, event_t *event) {
                 (tevent.key == TB_KEY_MOUSE_LEFT)) {
                 int x0 = tevent.x - PADDING_COL;
                 int y0 = tevent.y - PADDING_ROW;
-                if (((x0 % SPACING_COL == 0) || (x0 % SPACING_COL == 1)) &&
-                    (y0 % SPACING_ROW == 0)) { // The user clicked on piece placement on the board
+                if (((x0 % SPACING_COL == 0)) && (y0 % SPACING_ROW == 0)) {
+                    // The user clicked on piece placement on the board
                     event->type       = EVENT_POSITION;
                     event->position.c = x0 / SPACING_COL;
                     event->position.r = y0 / SPACING_ROW;

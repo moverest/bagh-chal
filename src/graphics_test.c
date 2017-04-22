@@ -26,19 +26,19 @@
         return false;                                               \
     }                                                               \
 
-#define TEST_EVENT_MOUSE(pos1, pos2)                             \
-    sprintf(state.msg, "Click on %c%d (%d,%d)",                  \
-            (char)pos1 + 'a', pos2, pos1, pos2);                 \
-    draw(context, &state);                                       \
-    wait_event(context, &event);                                 \
-    if (event.type != EVENT_POSITION) {                          \
-        sprintf(err_msg, "Expected (%d,%d)", pos1, pos2);        \
-        return false;                                            \
-    }                                                            \
-    if (event.position.c != pos1 || event.position.r != pos2) {  \
-        sprintf(err_msg, "Expected (%d,%d), got (%d,%d)",        \
-                pos1, pos2, event.position.c, event.position.r); \
-        return false;                                            \
+#define TEST_EVENT_MOUSE(pos1, pos2)                                  \
+    sprintf(state.msg, "Click on %c (%d,%d)",                         \
+            position_get_tag((position_t){pos1, pos2 }), pos1, pos2); \
+    draw(context, &state);                                            \
+    wait_event(context, &event);                                      \
+    if (event.type != EVENT_POSITION) {                               \
+        sprintf(err_msg, "Expected (%d,%d)", pos1, pos2);             \
+        return false;                                                 \
+    }                                                                 \
+    if (event.position.c != pos1 || event.position.r != pos2) {       \
+        sprintf(err_msg, "Expected (%d,%d), got (%d,%d)",             \
+                pos1, pos2, event.position.c, event.position.r);      \
+        return false;                                                 \
     }
 
 #define WAIT_BEFORE_NEXT_TEST()                                  \
@@ -94,7 +94,7 @@ bool test_graphics(void                           *context,
     game.num_goats_to_put = 19;
     game.num_eaten_goats  = 0;
     game.turn             = TIGER_TURN;
-    state.input.from.c    = 0;
+    state.input.from.c    = POSITION_NOT_SET;
     state.input.from.r    = POSITION_NOT_SET;
     state.input.to.c      = POSITION_NOT_SET;
     state.input.to.r      = POSITION_NOT_SET;
@@ -124,7 +124,7 @@ bool test_graphics(void                           *context,
     game.turn             = TIGER_TURN;
     state.input.from.c    = 1;
     state.input.from.r    = 3;
-    state.input.to.c      = 1;
+    state.input.to.c      = POSITION_NOT_SET;
     state.input.to.r      = POSITION_NOT_SET;
 
     board_t board2 = { {
@@ -152,7 +152,7 @@ bool test_graphics(void                           *context,
     game.turn             = GOAT_TURN;
     state.input.from.c    = 3;
     state.input.from.r    = 2;
-    state.input.to.c      = 3;
+    state.input.to.c      = POSITION_NOT_SET;
     state.input.to.r      = POSITION_NOT_SET;
 
     board_t board3 = { {
@@ -179,7 +179,7 @@ bool test_graphics(void                           *context,
     TEST_EVENT_KEY(KEY_ARROW_UP);
     TEST_EVENT_CH('a');
     TEST_EVENT_CH('4');
-    TEST_EVENT_MOUSE(2, 1);
+    TEST_EVENT_MOUSE(3, 1);
     TEST_EVENT_CH('A');
     TEST_EVENT_MOUSE(0, 0);
     return true;

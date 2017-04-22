@@ -41,6 +41,11 @@ bool position_is_valid(position_t pos) {
 }
 
 
+bool position_is_set(position_t pos) {
+    return pos.c != POSITION_NOT_SET && pos.r != POSITION_NOT_SET;
+}
+
+
 bool position_has_diagonal(position_t pos) {
     return (pos.r + pos.c) % 2 == 0;
 }
@@ -48,6 +53,26 @@ bool position_has_diagonal(position_t pos) {
 
 bool position_equals(position_t pos1, position_t pos2) {
     return pos1.c == pos2.c && pos1.r == pos2.r;
+}
+
+
+char position_get_tag(position_t pos) {
+    return 'a' + pos.c + 5 * pos.r;
+}
+
+
+position_t position_from_tag(char tag) {
+    tag -= 'a';
+
+    if (tag > 5 * 5) {
+        return (position_t){
+                   POSITION_NOT_SET, POSITION_NOT_SET
+        };
+    }
+
+    return (position_t){
+               tag % 5, tag / 5
+    };
 }
 
 

@@ -55,8 +55,11 @@ void set_possible_position(possible_positions_t *possible_pos,
 void reset_possible_positions(possible_positions_t *possible_pos);
 
 bool position_is_valid(position_t pos);
+bool position_is_set(position_t pos);
 bool position_has_diagonal(position_t pos);
 bool position_equals(position_t pos1, position_t pos2);
+char position_get_tag(position_t pos);
+position_t position_from_tag(char tag);
 bool mvt_is_diagonal(mvt_t mvt);
 
 #endif
