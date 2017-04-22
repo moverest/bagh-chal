@@ -2,6 +2,7 @@
 
 #include "game.h"
 
+// See header.
 game_t *game_new() {
     game_t *new_game = malloc(sizeof(game_t));
 
@@ -9,12 +10,12 @@ game_t *game_new() {
     return new_game;
 }
 
-
+// See header.
 void game_free(game_t *g) {
     free(g);
 }
 
-
+// See header.
 void game_reset(game_t *g) {
     g->num_goats_to_put = 20;
     g->num_eaten_goats  = 0;
@@ -115,7 +116,8 @@ static bool test_possible_position(board_t              *board,
     return mvt_possible;
 }
 
-
+// mark_possible_movable_from_positions marks all the positions from witch the
+// player can do a move.
 static void mark_possible_movable_from_positions(board_t              *board,
                                                  possible_positions_t *possible_positions,
                                                  player_turn_t        turn) {
@@ -137,7 +139,8 @@ static void mark_possible_movable_from_positions(board_t              *board,
     }
 }
 
-
+// mark_possible_movable_to_positons marks all the positions where the token
+// a the given position can be moved in `possible_positions`.
 static void mark_possible_movable_to_positons(board_t *board, position_t from_pos,
                                               possible_positions_t *possible_positions,
                                               player_turn_t turn) {
@@ -151,7 +154,8 @@ static void mark_possible_movable_to_positons(board_t *board, position_t from_po
     }
 }
 
-
+// mark_empty_positions marks all the empty spot where a goat can be put in
+// `possible_pos`.
 static void mark_empty_positions(board_t *board, possible_positions_t *possible_pos) {
     position_t pos;
 
@@ -164,7 +168,7 @@ static void mark_empty_positions(board_t *board, possible_positions_t *possible_
     }
 }
 
-
+// See header.
 void game_get_possible_from_positions(game_t               *game,
                                       possible_positions_t *possible_pos) {
     reset_possible_positions(possible_pos);
@@ -187,7 +191,7 @@ void game_get_possible_from_positions(game_t               *game,
     }
 }
 
-
+// See header.
 void game_get_possible_to_positions(game_t *game, position_t from_pos,
                                     possible_positions_t *possible_pos) {
     reset_possible_positions(possible_pos);
@@ -198,6 +202,7 @@ void game_get_possible_to_positions(game_t *game, position_t from_pos,
 
 #define MAX(x, y)    x > y ? x : y
 
+// See header.
 bool game_do_mvt(game_t *game, mvt_t mvt) {
     if (!position_is_valid(mvt.from)) {
         return false;
@@ -274,7 +279,7 @@ bool game_do_mvt(game_t *game, mvt_t mvt) {
     return false;
 }
 
-
+// is_blocked returns tree if no move can be done.
 static bool is_blocked(board_t *board, player_turn_t turn) {
     cell_state_t movable_cell = turn == TIGER_TURN ? TIGER_CELL : GOAT_CELL;
 
@@ -298,15 +303,7 @@ static bool is_blocked(board_t *board, player_turn_t turn) {
     return true;
 }
 
-
+// See header.
 bool game_is_done(game_t *game) {
-    if (game->num_eaten_goats > 4) {
-        return true;
-    }
-
-    if (is_blocked(&game->board, TIGER_TURN)) {
-        return true;
-    }
-
-    return false;
+    return game->num_eaten_goats > 4 || is_blocked(&game->board, TIGER_TURN);
 }

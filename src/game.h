@@ -14,7 +14,11 @@ typedef struct {
 
 // game_reset resets the game.
 void game_reset(game_t *g);
+
+// game_new creates a new game object.
 game_t *game_new();
+
+// game_free free the game object from memory.
 void game_free(game_t *g);
 
 
