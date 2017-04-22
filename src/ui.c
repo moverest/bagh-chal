@@ -1,74 +1,9 @@
 #include <stdbool.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "ui.h"
 #include "graphics.h"
-
-static void input_append_col(position_t *pos, char ch,
-                             possible_positions_t *possible_pos) {
-    //ch &= ~32; // Put in lower case
-    ch -= 'a';
-
-    if ((ch < 0) || (ch >= 5)) {
-        return;
-    }
-
-    bool valid = false;
-    for (int i = 0; i < 5; i++) {
-        if (is_position_possible(possible_pos, (position_t){ch, i })) {
-            valid = true;
-            continue;
-        }
-    }
-
-    if (!valid) {
-        return;
-    }
-
-    pos->c = ch;
-}
-
-
-static void input_append_row(position_t *pos, char ch,
-                             possible_positions_t *possible_pos) {
-    ch -= '0';
-
-    if ((ch < 0) || (ch >= 5)) {
-        return;
-    }
-
-    if (!is_position_possible(possible_pos, (position_t){pos->c, ch })) {
-        return;
-    }
-
-    pos->r = ch;
-}
-
-
-static bool input_append_to_position(position_t *pos, char ch,
-                                     possible_positions_t *possible_pos) {
-    if (pos->c == POSITION_NOT_SET) {
-        input_append_col(pos, ch, possible_pos);
-        return true;
-    }
-
-    if (pos->r == POSITION_NOT_SET) {
-        input_append_row(pos, ch, possible_pos);
-        return true;
-    }
-
-    return false;
-}
-
-
-static void input_append(mvt_t *input, char ch,
-                         possible_positions_t *possible_pos) {
-    if (input_append_to_position(&input->from, ch, possible_pos)) {
-        return;
-    }
-    input_append_to_position(&input->to, ch, possible_pos);
-}
-
 
 static void input_append_position(mvt_t                *input,
                                   possible_positions_t *possible_positions,
@@ -85,6 +20,19 @@ static void input_append_position(mvt_t                *input,
         input->to = position;
         return;
     }
+}
+
+
+static void input_append_from_tag(mvt_t                *input,
+                                  possible_positions_t *possible_positions,
+                                  char                 tag) {
+    position_t pos = position_from_tag(tag);
+
+    if (!position_is_valid(pos)) {
+        return;
+    }
+
+    input_append_position(input, possible_positions, pos);
 }
 
 
@@ -172,8 +120,9 @@ void ui_main(void                           *graphics_context,
         case EVENT_KEY:
             switch (event.key) {
             case KEY_CH:
-                input_append(&state.input, event.ch,
-                             &state.possible_positions);
+                input_append_from_tag(&state.input,
+                                      &state.possible_positions,
+                                      event.ch);
                 break;
 
             case KEY_BACKSPACE:
