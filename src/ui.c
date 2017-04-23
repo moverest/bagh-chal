@@ -153,6 +153,7 @@ void ui_main(void                 *graphics_context,
     }
 
     if (!stop) {
+        reset_possible_positions(&state.possible_positions);
         sprintf(msg, "%s wins", state.game->turn == TIGER_TURN ? "Goat" : "Tiger");
         graphics.draw_game(graphics_context, &state);
         graphics.wait_event(graphics_context, &event);
