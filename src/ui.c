@@ -119,10 +119,14 @@ void ui_main(void                 *graphics_context,
         case EVENT_KEY:
             switch (event.key) {
             case KEY_CH:
-                input_append_from_tag(&state.input,
-                                      &state.possible_positions,
-                                      event.ch);
-                break;
+                if (event.ch == 'Q') {
+                    stop = true;
+                } else {
+                    input_append_from_tag(&state.input,
+                                          &state.possible_positions,
+                                          event.ch);
+                    break;
+                }
 
             case KEY_BACKSPACE:
                 input_backspace(&state.input);

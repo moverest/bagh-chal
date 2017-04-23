@@ -9,8 +9,8 @@
 /*
  *
  *      a      b      c      d      e
- *    0 + ---- + ---- + ---- + ---- +                       < PADDING_ROW
- *      | \    |    / | \    |    / |
+ *    0 + ---- + ---- + ---- + ---- +       Quit            < PADDING_ROW
+ *      | \    |    / | \    |    / |                         QUIT_ROW
  *      |    \ | /    |    \ | /    |       Tiger turn      < TURN_ROW
  *    1 + ---- + ---- + ---- + ---- +
  *      |    / | \    |    / | \    |       19 Goats left   < GOAT_LEFT_ROW
@@ -30,10 +30,11 @@
  * ^                         SPACING_COL    GOAT_EATEN_COL
  * MOVE_COL                                 GOAT_LEFT_COL
  *                                          MSG_COL
+ *                                          QUIT_COL
  */
 
-#define PADDING_COL                            4
-#define PADDING_ROW                            2
+#define PADDING_COL                            2
+#define PADDING_ROW                            1
 #define GOAT_EATEN_ROW                         40
 #define GOAT_EATEN_COL                         7
 #define GOAT_LEFT_ROW                          40
@@ -44,6 +45,9 @@
 #define MOVE_COL                               1
 #define MSG_ROW                                9
 #define MSG_COL                                40
+#define QUIT_ROW                               2
+#define QUIT_COL                               40
+#define QUIT_LEN                               4
 
 #define POSSIBLE_POSSITION_TIGER_TURN_COLOR    TB_MAGENTA
 #define POSSIBLE_POSSITION_GOAT_TURN_COLOR     TB_GREEN
@@ -164,8 +168,16 @@ static void draw_turn(player_turn_t turn) {
 }
 
 
+// draw_quit draws the "Quit" button on the screen.
+static void draw_quit() {
+    tb_change_cell(QUIT_COL, QUIT_ROW, 'Q', TB_DEFAULT | TB_UNDERLINE, TB_DEFAULT);
+    print_str("uit", QUIT_COL + 1, QUIT_ROW);
+}
+
+
 // draw_gui writes what is write in it.
 static void draw_gui(game_state_to_draw_t *state) {
+    draw_quit();
     draw_turn(state->game->turn);
     draw_goat_left(state->game->num_goats_to_put);
     draw_goat_eaten(state->game->num_eaten_goats);
@@ -320,6 +332,11 @@ void graphics_tb_wait_event(void *context, event_t *event) {
                     event->position.r = y0 / SPACING_ROW;
                     stop = 1;
                 }
+            } else if ((tevent.x >= QUIT_COL) &&
+                       (tevent.x < QUIT_COL + QUIT_LEN) &&
+                       (tevent.y == QUIT_ROW)) {
+                event->type = EVENT_QUIT;
+                stop        = 1;
             }
             break;
         }
