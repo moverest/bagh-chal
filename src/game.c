@@ -102,7 +102,7 @@ static bool test_possible_position(board_t              *board,
 
 
         for (int i = 0; i < sizeof(to_check) / sizeof(to_check[0]); i++) {
-            if (position_is_valid(to_check[i]) &&
+            if (position_is_valid(jump_to_check[i]) &&
                 (board_get_cell(board, jump_to_check[i]) == EMPTY_CELL) &&
                 (board_get_cell(board, to_check[i]) == GOAT_CELL)) {
                 if (possible_dest == NULL) {
