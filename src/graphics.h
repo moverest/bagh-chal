@@ -40,10 +40,15 @@ typedef struct {
 
 // graphics_draw_callback_t defines the function to be used as a callback to
 // draw the current state of the game on the screen.
-typedef void (*graphics_draw_callback_t)(void *context, game_state_to_draw_t *state);
+typedef void (*graphics_draw_game_callback_t)(void *context, game_state_to_draw_t *state);
 
 // graphics_wait_event_callback_t defines the function to be used as a callback
 // to wait for events.
 typedef void (*graphics_wait_event_callback_t)(void *context, event_t *event);
+
+typedef struct {
+    graphics_draw_game_callback_t  draw_game;
+    graphics_wait_event_callback_t wait_event;
+} graphics_callbacks_t;
 
 #endif

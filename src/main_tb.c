@@ -8,7 +8,7 @@
 int main(int argc, char **argv) {
     graphics_tb_t *tg = graphics_tb_init();
 
-    ui_main(tg, graphics_tb_draw, graphics_tb_wait_event);
+    ui_main(tg, graphics_tb_callbacks);
 
     graphics_tb_quit(tg);
     return 0;

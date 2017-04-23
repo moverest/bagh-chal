@@ -15,7 +15,7 @@ static void test_graphics_tb() {
         return;
     }
 
-    bool success = test_graphics(graphics, graphics_tb_draw, graphics_tb_wait_event, err_msg);
+    bool success = test_graphics(graphics, graphics_tb_callbacks, err_msg);
     graphics_tb_quit(graphics);
     if (!success) {
         puts(err_msg);

@@ -10,10 +10,9 @@
 // test_graphics run a simple test with differents game situation drawn on the
 // screen.
 // Returns true if test succeeded and error message is set, false otherwhise.
-bool test_graphics(void                           *context,
-                   graphics_draw_callback_t       draw,
-                   graphics_wait_event_callback_t wait_event,
-                   char                           *err_msg);
+bool test_graphics(void                 *context,
+                   graphics_callbacks_t graphics,
+                   char                 *err_msg);
 
 
 #endif

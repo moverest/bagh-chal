@@ -237,8 +237,8 @@ static void draw_input(game_state_to_draw_t *state) {
 }
 
 
-// graphics_tb_draw draws the whole screen.
-void graphics_tb_draw(void *context, game_state_to_draw_t *state) {
+// graphics_tb_draw_game draws the whole screen.
+void graphics_tb_draw_game(void *context, game_state_to_draw_t *state) {
     tb_clear();
     draw_board();
     draw_gui(state);
@@ -331,3 +331,9 @@ void graphics_tb_quit(graphics_tb_t *tg) {
     tb_shutdown();
     free(tg);
 }
+
+
+graphics_callbacks_t graphics_tb_callbacks = {
+    .draw_game  = graphics_tb_draw_game,
+    .wait_event = graphics_tb_wait_event
+};

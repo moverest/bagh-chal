@@ -6,8 +6,8 @@
 
 #define TEST_EVENT_KEY(key_name)                            \
     sprintf(state.msg, "Press %s", # key_name);             \
-    draw(context, &state);                                  \
-    wait_event(context, &event);                            \
+    graphics.draw_game(context, &state);                    \
+    graphics.wait_event(context, &event);                   \
     if (event.type != EVENT_KEY || event.key != key_name) { \
         sprintf(err_msg, "Expected %s", # key_name);        \
         return false;                                       \
@@ -15,8 +15,8 @@
 
 #define TEST_EVENT_CH(ch_name)                                      \
     sprintf(state.msg, "Press %c", ch_name);                        \
-    draw(context, &state);                                          \
-    wait_event(context, &event);                                    \
+    graphics.draw_game(context, &state);                            \
+    graphics.wait_event(context, &event);                           \
     if (event.type != EVENT_KEY) {                                  \
         sprintf(err_msg, "Expected %c", ch_name);                   \
         return false;                                               \
@@ -29,8 +29,8 @@
 #define TEST_EVENT_MOUSE(pos1, pos2)                                  \
     sprintf(state.msg, "Click on %c (%d,%d)",                         \
             position_get_tag((position_t){pos1, pos2 }), pos1, pos2); \
-    draw(context, &state);                                            \
-    wait_event(context, &event);                                      \
+    graphics.draw_game(context, &state);                              \
+    graphics.wait_event(context, &event);                             \
     if (event.type != EVENT_POSITION) {                               \
         sprintf(err_msg, "Expected (%d,%d)", pos1, pos2);             \
         return false;                                                 \
@@ -43,17 +43,16 @@
 
 #define WAIT_BEFORE_NEXT_TEST()                                  \
     do {                                                         \
-        draw(context, &state);                                   \
-        wait_event(context, &event);                             \
+        graphics.draw_game(context, &state);                     \
+        graphics.wait_event(context, &event);                    \
         if (event.type == EVENT_QUIT) {                          \
             return true;                                         \
         }                                                        \
     } while (event.type != EVENT_KEY || event.key != KEY_ENTER); \
 
-bool test_graphics(void                           *context,
-                   graphics_draw_callback_t       draw,
-                   graphics_wait_event_callback_t wait_event,
-                   char                           *err_msg) {
+bool test_graphics(void                 *context,
+                   graphics_callbacks_t graphics,
+                   char                 *err_msg) {
     game_state_to_draw_t state;
     game_t               game;
     event_t              event;

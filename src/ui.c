@@ -83,9 +83,8 @@ static void update_possible_positions(game_state_to_draw_t *state) {
 }
 
 
-void ui_main(void                           *graphics_context,
-             graphics_draw_callback_t       draw_game,
-             graphics_wait_event_callback_t wait_event) {
+void ui_main(void                 *graphics_context,
+             graphics_callbacks_t graphics) {
     char                 msg[256] = "";
     game_state_to_draw_t state    = {
         .game = game_new(),
@@ -100,9 +99,9 @@ void ui_main(void                           *graphics_context,
 
     while (!game_is_done(state.game) && !stop) {
         update_possible_positions(&state);
-        draw_game(graphics_context, &state);
+        graphics.draw_game(graphics_context, &state);
 
-        wait_event(graphics_context, &event);
+        graphics.wait_event(graphics_context, &event);
         switch (event.type) {
         case EVENT_QUIT:
             stop = true;
@@ -151,8 +150,8 @@ void ui_main(void                           *graphics_context,
 
     if (!stop) {
         sprintf(msg, "%s wins", state.game->turn == TIGER_TURN ? "Goat" : "Tiger");
-        draw_game(graphics_context, &state);
-        wait_event(graphics_context, &event);
+        graphics.draw_game(graphics_context, &state);
+        graphics.wait_event(graphics_context, &event);
     }
 
     game_free(state.game);
