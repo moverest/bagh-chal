@@ -3,6 +3,7 @@
 
 #include "test.h"
 #include "game.h"
+#include "ai_rand.h"
 
 static bool board_equals(board_t *b1, board_t *b2) {
     position_t pos;
@@ -324,9 +325,35 @@ static void test_game_begin(test_t *t) {
 }
 
 
+static void print_mvt(mvt_t mvt) {
+    printf("{{%d, %d}, {%d, %d}}", mvt.from.c, mvt.from.r, mvt.to.c, mvt.to.r);
+}
+
+
+static void test_ai_rand(test_t *t) {
+    game_t    *game = game_new();
+    ai_rand_t *ai   = ai_rand_callbacks.new();
+    mvt_t     mvt;
+
+    mvt = ai_rand_callbacks.get_goat_mvt(ai, game);
+    print_mvt(mvt);
+    puts("");
+
+    game_do_mvt(game, mvt);
+    mvt = ai_rand_callbacks.get_tiger_mvt(ai, game);
+    print_mvt(mvt);
+    puts("");
+
+
+    ai_rand_callbacks.free(ai);
+    free(game);
+}
+
+
 int main(int argc, char **argv) {
     test_function_t tests[] = {
-        TEST_FUNCTION(test_game_begin)
+        TEST_FUNCTION(test_game_begin),
+        TEST_FUNCTION(test_ai_rand)
     };
 
     return test_run(tests, sizeof(tests) / sizeof(tests[0]));

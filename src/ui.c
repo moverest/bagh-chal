@@ -84,71 +84,88 @@ static void update_possible_positions(game_state_to_draw_t *state) {
 
 
 void ui_main(void                 *graphics_context,
-             graphics_callbacks_t graphics) {
+             graphics_callbacks_t graphics,
+             ai_callbacks_t       *tiger_ai,
+             ai_callbacks_t       *goat_ai) {
     char                 msg[256] = "";
     game_state_to_draw_t state    = {
         .game = game_new(),
         .msg  = msg
     };
 
-    event_t event;
+    void *tiger_ai_context = NULL;
+    void *goat_ai_context  = NULL;
 
+    if (tiger_ai) {
+        tiger_ai_context = tiger_ai->new();
+    }
+    if (goat_ai) {
+        goat_ai_context = goat_ai->new();
+    }
+
+    event_t event;
     input_reset(&state.input);
 
     bool stop = false;
 
     while (!game_is_done(state.game) && !stop) {
-        update_possible_positions(&state);
-        graphics.draw_game(graphics_context, &state);
+        if ((tiger_ai != NULL) && (state.game->turn == TIGER_TURN)) {
+            game_do_mvt(state.game, tiger_ai->get_tiger_mvt(tiger_ai_context, state.game));
+        } else if ((goat_ai != NULL) && (state.game->turn == GOAT_TURN)) {
+            game_do_mvt(state.game, goat_ai->get_goat_mvt(goat_ai_context, state.game));
+        } else {
+            update_possible_positions(&state);
+            graphics.draw_game(graphics_context, &state);
 
-        graphics.wait_event(graphics_context, &event);
-        switch (event.type) {
-        case EVENT_QUIT:
-            stop = true;
-            break;
-
-        case EVENT_REDRAW:
-            break;
-
-        case EVENT_POSITION:
-            input_append_position(&state.input,
-                                  &state.possible_positions,
-                                  event.position);
-            break;
-
-        case EVENT_KEY:
-            switch (event.key) {
-            case KEY_CH:
-                if (event.ch == 'Q') {
-                    stop = true;
-                } else {
-                    input_append_from_tag(&state.input,
-                                          &state.possible_positions,
-                                          event.ch);
-                    break;
-                }
-
-            case KEY_BACKSPACE:
-                input_backspace(&state.input);
-                break;
-
-            case KEY_ESC:
+            graphics.wait_event(graphics_context, &event);
+            switch (event.type) {
+            case EVENT_QUIT:
                 stop = true;
                 break;
 
-            default:
-                // To remove gcc warning telling that other cases are not
-                // being handled.
+            case EVENT_REDRAW:
+                break;
+
+            case EVENT_POSITION:
+                input_append_position(&state.input,
+                                      &state.possible_positions,
+                                      event.position);
+                break;
+
+            case EVENT_KEY:
+                switch (event.key) {
+                case KEY_CH:
+                    if (event.ch == 'Q') {
+                        stop = true;
+                    } else {
+                        input_append_from_tag(&state.input,
+                                              &state.possible_positions,
+                                              event.ch);
+                        break;
+                    }
+
+                case KEY_BACKSPACE:
+                    input_backspace(&state.input);
+                    break;
+
+                case KEY_ESC:
+                    stop = true;
+                    break;
+
+                default:
+                    // To remove gcc warning telling that other cases are not
+                    // being handled.
+                    break;
+                }
                 break;
             }
-            break;
-        }
 
-        if (input_is_complete(&state)) {
-            if (!game_do_mvt(state.game, state.input)) {
-                strcpy(msg, "Invalid movement");
+            if (input_is_complete(&state)) {
+                if (!game_do_mvt(state.game, state.input)) {
+                    strcpy(msg, "Invalid movement");
+                }
+                input_reset(&state.input);
             }
-            input_reset(&state.input);
         }
     }
 
@@ -159,5 +176,12 @@ void ui_main(void                 *graphics_context,
         graphics.wait_event(graphics_context, &event);
     }
 
+
+    if (tiger_ai) {
+        tiger_ai->free(tiger_ai_context);
+    }
+    if (goat_ai) {
+        goat_ai->free(goat_ai_context);
+    }
     game_free(state.game);
 }

@@ -25,6 +25,19 @@ void set_possible_position(possible_positions_t *possible_pos,
 }
 
 
+int possible_positions_count(possible_positions_t *possible_pos) {
+    int count = 0;
+
+    for (int i = 0; i < 5 * 5; i++) {
+        if (possible_pos->ok[i]) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+
 void reset_possible_positions(possible_positions_t *possible_positions) {
     position_t pos;
 

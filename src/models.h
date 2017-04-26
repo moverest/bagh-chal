@@ -51,6 +51,7 @@ bool is_position_possible(possible_positions_t *possible_pos,
                           position_t           position);
 void set_possible_position(possible_positions_t *possible_pos,
                            position_t position, bool ok);
+int possible_positions_count(possible_positions_t *possible_pos);
 
 void reset_possible_positions(possible_positions_t *possible_pos);
 
