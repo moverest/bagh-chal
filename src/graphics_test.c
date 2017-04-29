@@ -120,7 +120,7 @@ bool test_graphics(void                 *context,
 
     game.num_goats_to_put = 0;
     game.num_eaten_goats  = 0;
-    game.turn             = TIGER_TURN;
+    game.turn             = GOAT_TURN;
     state.input.from.c    = 1;
     state.input.from.r    = 3;
     state.input.to.c      = POSITION_NOT_SET;
@@ -129,7 +129,7 @@ bool test_graphics(void                 *context,
     board_t board2 = { {
                            TIGER_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL,
                            GOAT_CELL, GOAT_CELL, EMPTY_CELL, TIGER_CELL, GOAT_CELL,
-                           GOAT_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL,
+                           GOAT_CELL, EMPTY_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL,
                            GOAT_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL,
                            TIGER_CELL, GOAT_CELL, GOAT_CELL, GOAT_CELL, TIGER_CELL
                        } };
