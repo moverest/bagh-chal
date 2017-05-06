@@ -77,7 +77,7 @@ char position_get_tag(position_t pos) {
 position_t position_from_tag(char tag) {
     tag -= 'a';
 
-    if (tag > 5 * 5) {
+    if ((tag > 5 * 5) || (tag < 0)) {
         return (position_t){
                    POSITION_NOT_SET, POSITION_NOT_SET
         };
