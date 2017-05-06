@@ -50,6 +50,7 @@
         }                                                        \
     } while (event.type != EVENT_KEY || event.key != KEY_ENTER); \
 
+
 bool test_graphics(void                 *context,
                    graphics_callbacks_t graphics,
                    char                 *err_msg) {

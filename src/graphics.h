@@ -5,6 +5,7 @@
 
 #include "models.h"
 #include "game.h"
+#include "menu.h"
 
 typedef struct {
     game_t               *game;
@@ -46,9 +47,12 @@ typedef void (*graphics_draw_game_callback_t)(void *context, game_state_to_draw_
 // to wait for events.
 typedef void (*graphics_wait_event_callback_t)(void *context, event_t *event);
 
+typedef void (*graphics_tb_draw_menu_callback_t)(void *context, menu_t *menu);
+
 typedef struct {
-    graphics_draw_game_callback_t  draw_game;
-    graphics_wait_event_callback_t wait_event;
+    graphics_draw_game_callback_t    draw_game;
+    graphics_wait_event_callback_t   wait_event;
+    graphics_tb_draw_menu_callback_t draw_menu;
 } graphics_callbacks_t;
 
 #endif

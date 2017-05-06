@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "ui.h"
+#include "ui_game.h"
 #include "graphics.h"
 
 static void input_append_position(mvt_t                *input,
@@ -83,10 +83,10 @@ static void update_possible_positions(game_state_to_draw_t *state) {
 }
 
 
-void ui_main(void                 *graphics_context,
-             graphics_callbacks_t graphics,
-             ai_callbacks_t       *tiger_ai,
-             ai_callbacks_t       *goat_ai) {
+void ui_game_main(void                 *graphics_context,
+                  graphics_callbacks_t graphics,
+                  ai_callbacks_t       *tiger_ai,
+                  ai_callbacks_t       *goat_ai) {
     char                 msg[256] = "";
     game_state_to_draw_t state    = {
         .game = game_new(),

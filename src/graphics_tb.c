@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "graphics_tb.h"
+#include "menu.h"
 
 
 /*
@@ -49,6 +50,7 @@
 #define QUIT_COL                               40
 #define QUIT_LEN                               4
 
+
 #define POSSIBLE_POSSITION_TIGER_TURN_COLOR    TB_MAGENTA
 #define POSSIBLE_POSSITION_GOAT_TURN_COLOR     TB_GREEN
 #define GOAT_COLOR                             TB_CYAN
@@ -60,6 +62,14 @@
 
 #define SPACING_COL                            7
 #define SPACING_ROW                            3
+
+
+// Menu
+#define TITLE_COL        10
+#define TITLE_ROW        5
+#define MENU_ITEM_COL    10
+#define MENU_ITEM_ROW    7
+
 
 graphics_tb_t *graphics_tb_init() {
     graphics_tb_t *tg = malloc(sizeof(graphics_tb_t));
@@ -249,6 +259,33 @@ static void draw_input(game_state_to_draw_t *state) {
 }
 
 
+void graphics_tb_draw_menu(void *context, menu_t *menu) {
+    tb_clear();
+    print_str(menu->title, TITLE_COL, TITLE_ROW);
+
+    for (int i = 0; i < menu->num_item; i++) {
+        int x = 0;
+        switch (menu->items[i]->type) {
+        case MENU_ITEM_SELECT:
+            x = print_str(menu->items[i]->label, MENU_ITEM_COL, MENU_ITEM_ROW + i);
+            x = x + print_str(" : ", MENU_ITEM_COL + x, MENU_ITEM_ROW + i);
+            print_str(menu->items[i]->choices[menu->items[i]->choice], MENU_ITEM_COL + x, MENU_ITEM_ROW + i);
+            break;
+
+        case MENU_ITEM_BUTTON:
+            print_str(menu->items[i]->label, MENU_ITEM_COL, MENU_ITEM_ROW + i);
+            break;
+
+        case MENU_ITEM_EMPTY:
+            break;
+        }
+    }
+
+    tb_set_cursor(MENU_ITEM_COL, MENU_ITEM_ROW + menu->cursor);
+    tb_present();
+}
+
+
 // graphics_tb_draw_game draws the whole screen.
 void graphics_tb_draw_game(void *context, game_state_to_draw_t *state) {
     tb_clear();
@@ -352,5 +389,6 @@ void graphics_tb_quit(graphics_tb_t *tg) {
 
 graphics_callbacks_t graphics_tb_callbacks = {
     .draw_game  = graphics_tb_draw_game,
-    .wait_event = graphics_tb_wait_event
+    .wait_event = graphics_tb_wait_event,
+    .draw_menu  = graphics_tb_draw_menu
 };
