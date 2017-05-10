@@ -7,6 +7,7 @@
 #include "graphics_tb.h"
 
 #include "termbox.h"
+#include "tools.h"
 
 #define WAIT_BEFORE_NEXT_TEST()                                  \
     do {                                                         \
@@ -28,16 +29,16 @@ bool test_menu(void                 *context,
     menu_item_t player_goat_item = {
         .type        = MENU_ITEM_SELECT,
         .choices     = ai_items,
-        .choice      =                                      0,
-        .num_choices = sizeof(ai_items) / sizeof(ai_items[0]),
+        .choice      =                   0,
+        .num_choices = ARRAY_LEN(ai_items),
         .label       = "Goat"
     };
 
     menu_item_t player_tiger_item = {
         .type        = MENU_ITEM_SELECT,
         .choices     = ai_items,
-        .choice      =                                      0,
-        .num_choices = sizeof(ai_items) / sizeof(ai_items[0]),
+        .choice      =                   0,
+        .num_choices = ARRAY_LEN(ai_items),
         .label       = "Tiger"
     };
 
@@ -58,9 +59,9 @@ bool test_menu(void                 *context,
     };
 
     menu_t menu = {
-        .cursor   =                                0,
+        .cursor   =                0,
         .items    = items,
-        .num_item = sizeof(items) / sizeof(items[0]),
+        .num_item = ARRAY_LEN(items),
         .title    = "Bagh-Chal game"
     };
 

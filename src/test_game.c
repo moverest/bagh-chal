@@ -4,6 +4,7 @@
 #include "test.h"
 #include "game.h"
 #include "ai_rand.h"
+#include "tools.h"
 
 static bool board_equals(board_t *b1, board_t *b2) {
     position_t pos;
@@ -356,5 +357,5 @@ int main(int argc, char **argv) {
         TEST_FUNCTION(test_ai_rand)
     };
 
-    return test_run(tests, sizeof(tests) / sizeof(tests[0]));
+    return test_run(tests, ARRAY_LEN(tests));
 }

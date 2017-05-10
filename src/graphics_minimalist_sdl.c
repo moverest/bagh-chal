@@ -4,6 +4,7 @@
 #include <SDL2/SDL_ttf.h>
 
 #include "graphics_minimalist_sdl.h"
+#include "tools.h"
 
 #define SCALE                      1
 
@@ -144,7 +145,7 @@ static bool create_text_textures(graphics_minimalist_sdl_t *sg) {
         { "Move ", &sg->prompt_move_texture }
     };
 
-    for (int i = 0; i < sizeof(to_create) / sizeof(to_create[0]); i++) {
+    for (int i = 0; i < ARRAY_LEN(to_create); i++) {
         *to_create[i].texture = str_to_texture(sg, to_create[i].text);
         if (to_create[i].texture == NULL) {
             return true;
@@ -294,8 +295,7 @@ static void draw_empty_board(graphics_minimalist_sdl_t *sg) {
         { BOARD_X + 2 * POSITION_SPACING_WIDTH,
           BOARD_Y }
     };
-    SDL_RenderDrawLines(sg->renderer, middle_square,
-                        sizeof(middle_square) / sizeof(middle_square[0]));
+    SDL_RenderDrawLines(sg->renderer, middle_square, ARRAY_LEN(middle_square));
 }
 
 
@@ -327,15 +327,9 @@ static void draw_goat_icon(graphics_minimalist_sdl_t *sg,
         DRAWING_POINT(7, 3)
     };
 
-    SDL_RenderDrawLines(sg->renderer, head,
-                        sizeof(head) / sizeof(head[0]));
-
-    SDL_RenderDrawLines(sg->renderer, left_horn,
-                        sizeof(left_horn) / sizeof(left_horn[0]));
-
-
-    SDL_RenderDrawLines(sg->renderer, right_horn,
-                        sizeof(right_horn) / sizeof(right_horn[0]));
+    SDL_RenderDrawLines(sg->renderer, head, ARRAY_LEN(head));
+    SDL_RenderDrawLines(sg->renderer, left_horn, ARRAY_LEN(left_horn));
+    SDL_RenderDrawLines(sg->renderer, right_horn, ARRAY_LEN(right_horn));
 }
 
 
@@ -359,11 +353,8 @@ static void draw_tiger_icon(graphics_minimalist_sdl_t *sg,
     };
 
 
-    SDL_RenderDrawLines(sg->renderer, head,
-                        sizeof(head) / sizeof(head[0]));
-
-    SDL_RenderDrawLines(sg->renderer, mouth,
-                        sizeof(mouth) / sizeof(mouth[0]));
+    SDL_RenderDrawLines(sg->renderer, head, ARRAY_LEN(head));
+    SDL_RenderDrawLines(sg->renderer, mouth, ARRAY_LEN(mouth));
 }
 
 
@@ -377,8 +368,7 @@ static void draw_select_icon(graphics_minimalist_sdl_t *sg,
         DRAWING_POINT(3, 3)
     };
 
-    SDL_RenderDrawLines(sg->renderer, points,
-                        sizeof(points) / sizeof(points[0]));
+    SDL_RenderDrawLines(sg->renderer, points, ARRAY_LEN(points));
 }
 
 
@@ -753,9 +743,7 @@ void graphics_minimalist_sdl_quit(graphics_minimalist_sdl_t *sg) {
             sg->num_eaten_goats_texture
         };
 
-        for (int i = 0;
-             i < sizeof(textures_to_destroy) / sizeof(textures_to_destroy[0]);
-             i++) {
+        for (int i = 0; i < ARRAY_LEN(textures_to_destroy); i++) {
             if (textures_to_destroy[i]) {
                 SDL_DestroyTexture(textures_to_destroy[i]);
             }

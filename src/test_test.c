@@ -1,4 +1,5 @@
 #include "test.h"
+#include "tools.h"
 
 int failed = 0;
 
@@ -29,7 +30,7 @@ int main(int argc, char **argv) {
     };
 
     // The return value should be the status code returned by main().
-    test_run(tests, sizeof(tests) / sizeof(tests[0]));
+    test_run(tests, ARRAY_LEN(tests));
 
     // In this special case, we return another value.
     // Indeed, failure here doesn't mean a test has failed but that we run
