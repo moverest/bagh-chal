@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "menu.h"
 #include "graphics.h"
 #include "graphics_tb.h"
+#include "graphics_minimalist_sdl.h"
 
 #include "termbox.h"
 #include "tools.h"

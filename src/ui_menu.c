@@ -37,10 +37,10 @@ bool ui_menu(void *graphics_context, graphics_callbacks_t graphics, menu_t *menu
                 break;
             }
 
+            break;
+
         case EVENT_QUIT:
-            if (event.key == KEY_ESC) {
-                quit = true;
-            }
+            quit = true;
             break;
 
         default:

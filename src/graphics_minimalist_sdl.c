@@ -5,6 +5,7 @@
 
 #include "graphics_minimalist_sdl.h"
 #include "tools.h"
+#include "menu.h"
 
 #define SCALE                      1
 
@@ -31,6 +32,12 @@
 #define NUM_EATEN_GOATS_Y          740 * SCALE
 #define MSG_X                      40 * SCALE
 #define MSG_Y                      740 * SCALE
+#define MENU_TITLE_X               230 * SCALE
+#define MENU_TITLE_Y               100 * SCALE
+#define MENU_ITEM_COL              230 * SCALE
+#define MENU_ITEM_ROW              200 * SCALE
+#define MENU_LINE_ITEMS_SPACING    50 * SCALE
+#define MENU_CURSOR_COL            200 * SCALE
 
 #define BG_COLOR_R                 0
 #define BG_COLOR_G                 0
@@ -635,6 +642,56 @@ void graphics_minimalist_sdl_draw_game(void *context, game_state_to_draw_t *stat
 }
 
 
+void draw_menu_string(void *context, char *str, int x, int y) {
+    graphics_minimalist_sdl_t *sg = context;
+
+    if (str[0] == '\0') {
+        return;
+    }
+
+    SDL_Texture *texture = str_to_texture(sg, str);
+    draw_texture(sg, texture, x, y);
+    SDL_DestroyTexture(texture);
+}
+
+
+void graphics_draw_menu(void *context, menu_t *menu) {
+    graphics_minimalist_sdl_t *sg = context;
+
+    char str[256] = "";
+
+    SDL_RenderClear(sg->renderer);
+
+    SDL_SetRenderDrawColor(sg->renderer,
+                           BG_COLOR_R,
+                           BG_COLOR_G,
+                           BG_COLOR_B,
+                           255);
+
+    draw_menu_string(sg, menu->title, MENU_TITLE_X, MENU_TITLE_Y);
+
+    for (int i = 0; i < menu->num_item; i++) {
+        switch (menu->items[i]->type) {
+        case MENU_ITEM_SELECT:
+            sprintf(str, "%s : %s", menu->items[i]->label, menu->items[i]->choices[menu->items[i]->choice]);
+            draw_menu_string(sg, str, MENU_ITEM_COL, MENU_ITEM_ROW + i * MENU_LINE_ITEMS_SPACING);
+            break;
+
+        case MENU_ITEM_BUTTON:
+            draw_menu_string(sg, menu->items[i]->label, MENU_ITEM_COL, MENU_ITEM_ROW + i * MENU_LINE_ITEMS_SPACING);
+            break;
+
+        case MENU_ITEM_EMPTY:
+            break;
+        }
+    }
+
+    draw_menu_string(sg, "|", MENU_CURSOR_COL, MENU_ITEM_ROW + menu->cursor * MENU_LINE_ITEMS_SPACING);
+
+    SDL_RenderPresent(sg->renderer);
+}
+
+
 void graphics_minimalist_sdl_wait_event(void *context, event_t *event) {
     while (1) {
         SDL_Event sdl_event;
@@ -655,6 +712,7 @@ void graphics_minimalist_sdl_wait_event(void *context, event_t *event) {
             switch (sdl_event.key.keysym.sym) {
             case SDLK_ESCAPE:
                 event->type = EVENT_QUIT;
+                event->key  = KEY_ESC;
                 return;
 
             case SDLK_q:
@@ -774,5 +832,6 @@ void graphics_minimalist_sdl_quit(graphics_minimalist_sdl_t *sg) {
 
 graphics_callbacks_t graphics_minimalist_sdl_callbacks = {
     .draw_game  = graphics_minimalist_sdl_draw_game,
-    .wait_event = graphics_minimalist_sdl_wait_event
+    .wait_event = graphics_minimalist_sdl_wait_event,
+    .draw_menu  = graphics_draw_menu
 };

@@ -4,6 +4,7 @@
 #include "ai.h"
 #include "graphics.h"
 #include "graphics_tb.h"
+#include "graphics_minimalist_sdl.h"
 #include "menu.h"
 #include "ui_menu.h"
 
