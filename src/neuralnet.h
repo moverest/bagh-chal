@@ -7,8 +7,8 @@
 typedef struct {
     int      num_layers;
     int      *sizes;
-    matrix_t *weights;
-    matrix_t *biases;
+    matrix_t **weights;
+    matrix_t **biases;
 } neuralnet_t;
 
 // make_neuralnet alloctate and initialize a new neural network with the given
