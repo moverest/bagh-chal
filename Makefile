@@ -9,13 +9,16 @@ SDL_FLAG=-lSDL2 -lSDL2_ttf
 debug: CCFLAGS += -DDEBUG -g -Wall
 debug: all
 
-all: $(foreach f, test_graphics_tb test_game test_test main_tb test_graphics_minimalist_sdl main_minimalist_sdl test_menu_tb test_menu_graphics_sdl test_matrix, $(BUILD_DIR)/$f)
+all: $(foreach f, test_graphics_tb test_game test_test main_tb test_graphics_minimalist_sdl main_minimalist_sdl test_menu_tb test_menu_graphics_sdl test_matrix test_neuralnet, $(BUILD_DIR)/$f)
 
 $(BUILD_DIR)/test_game: $(BUILD_DIR) $(foreach f, models.o test.o game.o ai_rand.o, $(BUILD_DIR)/$f)
 	$(CC) -o $@ $(SRC_DIR)/test_game.c $(foreach f, models.o test.o game.o ai_rand.o, $(BUILD_DIR)/$f)
 
 $(BUILD_DIR)/test_matrix: $(BUILD_DIR) $(foreach f, matrix.o test.o, $(BUILD_DIR)/$f)
 	$(CC) -o $@ $(SRC_DIR)/test_matrix.c $(foreach f, matrix.o test.o, $(BUILD_DIR)/$f)
+
+$(BUILD_DIR)/test_neuralnet: $(BUILD_DIR) $(foreach f, neuralnet.o matrix.o test.o, $(BUILD_DIR)/$f)
+	$(CC) -o $@ $(SRC_DIR)/test_neuralnet.c $(foreach f, neuralnet.o matrix.o test.o, $(BUILD_DIR)/$f)
 
 $(BUILD_DIR)/test_graphics_tb: $(BUILD_DIR) $(foreach f, models.o graphics_tb.o graphics_test.o, $(BUILD_DIR)/$f)
 	$(CC) $(TERMBOX_FLAG) -o $@ $(SRC_DIR)/test_graphics_tb.c $(foreach f, models.o graphics_tb.o graphics_test.o, $(BUILD_DIR)/$f)
@@ -82,6 +85,9 @@ $(BUILD_DIR)/ai_rand.o: $(BUILD_DIR)
 
 $(BUILD_DIR)/matrix.o: $(BUILD_DIR)
 	$(CC) -c $(SRC_DIR)/matrix.c -o $@
+
+$(BUILD_DIR)/neuralnet.o: $(BUILD_DIR)
+	$(CC) -c $(SRC_DIR)/neuralnet.c -o $@
 
 $(BUILD_DIR)/test_test: $(BUILD_DIR) $(BUILD_DIR)/test.o
 	$(CC) $(BUILD_DIR)/test.o $(SRC_DIR)/test_test.c -o $@
