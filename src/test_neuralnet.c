@@ -49,7 +49,7 @@ static bool matrix_equals(matrix_t *m1, matrix_t *m2, double error) {
     }                                                             \
     if (m->num_rows != rows ||                                    \
         m->num_cols != cols ||                                    \
-        m->capacity != cap) {                                     \
+        (m->capacity != cap && cap != -1)) {                      \
         printf("%s:%d: Matrix sizes don't match.\n", file, line); \
         printf("Expected: {r: %d, c: %d, cap: %d}\n",             \
                rows, cols, cap);                                  \
@@ -129,6 +129,48 @@ static void test_matrix_add(test_t *t) {
 }
 
 
+static void test_matrix_product(test_t *t) {
+    struct {
+        int    a_rows, a_cols, b_cols;
+        double *a, *b, *expected;
+    }
+    tests[] = {
+        {  1,   3,   1,
+                                     (double[])              {  1,   2, 3 },
+                                     (double[])              {  4,  -1, 3 },
+                                     (double[])              {11 } },
+        {  2,   3,   2,
+                                     (double[])              {  1,   2,  -3,   4, -5, 6 },
+                                     (double[])              {  7,   8, -10, -11, 12, 8 },
+                                     (double[])              {-49, -38, 150,135 } },
+    };
+
+    matrix_t *a        = make_matrix(0, 0, 0);
+    matrix_t *b        = make_matrix(0, 0, 0);
+    matrix_t *expected = make_matrix(0, 0, 0);
+    matrix_t *got      = make_matrix(0, 0, 0);
+
+    for (int i = 0; i < ARRAY_LEN(tests); i++) {
+        matrix_initialize_from_values(a, tests[i].a_rows,
+                                      tests[i].a_cols, tests[i].a);
+
+        matrix_initialize_from_values(b, tests[i].a_cols,
+                                      tests[i].b_cols, tests[i].b);
+
+        matrix_initialize_from_values(expected, tests[i].a_rows,
+                                      tests[i].b_cols, tests[i].expected);
+
+        matrix_product(a, b, got);
+        CHECK_MATRIX_EQUAL(expected, got, .00001, __FILE__, __LINE__);
+    }
+
+    free_matrix(a);
+    free_matrix(b);
+    free_matrix(expected);
+    free_matrix(got);
+}
+
+
 static void test_matrix_apply(test_t *t) {
     struct {
         int    rows, cols;
@@ -158,6 +200,7 @@ int main(int argc, char **argv) {
     test_function_t tests[] = {
         TEST_FUNCTION(test_matrix_creation),
         TEST_FUNCTION(test_matrix_add),
+        TEST_FUNCTION(test_matrix_product),
         TEST_FUNCTION(test_matrix_apply)
     };
 

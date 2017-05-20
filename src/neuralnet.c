@@ -88,8 +88,21 @@ void matrix_initialize_from_values(matrix_t *m, int rows, int cols,
 
 
 int matrix_product(matrix_t *m1, matrix_t *m2, matrix_t *dest) {
-    exit(1); // TODO: implement
-    return 0;
+    if (m1->num_cols != m2->num_rows) {
+        return -1;
+    }
+
+    matrix_set_size(dest, m1->num_rows, m2->num_cols);
+    for (int i = 0; i < dest->num_rows; i++) {
+        for (int j = 0; j < dest->num_cols; j++) {
+            double sum = 0;
+            for (int k = 0; k < m1->num_cols; k++) {
+                sum += matrix_get_value(m1, i, k) * matrix_get_value(m2, k, j);
+            }
+
+            matrix_set_value(dest, i, j, sum);
+        }
+    }
 }
 
 
