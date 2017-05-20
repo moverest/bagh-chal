@@ -103,6 +103,8 @@ int matrix_product(matrix_t *m1, matrix_t *m2, matrix_t *dest) {
             matrix_set_value(dest, i, j, sum);
         }
     }
+
+    return 0;
 }
 
 
