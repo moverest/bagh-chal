@@ -106,3 +106,12 @@ int matrix_add(matrix_t *m1, matrix_t *m2, matrix_t *dest) {
 
     return 0;
 }
+
+
+void matrix_apply(matrix_t *m, matrix_t *dest, double (*f)(double)) {
+    matrix_set_size(dest, m->num_rows, m->num_cols);
+    int max = m->num_rows * m->num_cols;
+    for (int i = 0; i < max; i++) {
+        dest->values[i] = f(m->values[i]);
+    }
+}

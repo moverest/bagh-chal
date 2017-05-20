@@ -129,10 +129,36 @@ static void test_matrix_add(test_t *t) {
 }
 
 
+static void test_matrix_apply(test_t *t) {
+    struct {
+        int    rows, cols;
+        double *in, *expected;
+    }
+    tests[] = {
+        { 1, 3, (double[]){1, -1, -5 }, (double[]){1, 1, 5 } }
+    };
+
+    matrix_t *in       = make_matrix(0, 0, 0);
+    matrix_t *expected = make_matrix(0, 0, 0);
+    matrix_t *got      = make_matrix(0, 0, 0);
+
+    for (int i = 0; i < ARRAY_LEN(tests); i++) {
+        matrix_initialize_from_values(in, tests[i].rows,
+                                      tests[i].cols, tests[i].in);
+        matrix_initialize_from_values(expected, tests[i].rows,
+                                      tests[i].cols, tests[i].expected);
+
+        matrix_apply(in, got, fabs);
+        CHECK_MATRIX_EQUAL(expected, got, .00001, __FILE__, __LINE__);
+    }
+}
+
+
 int main(int argc, char **argv) {
     test_function_t tests[] = {
         TEST_FUNCTION(test_matrix_creation),
         TEST_FUNCTION(test_matrix_add),
+        TEST_FUNCTION(test_matrix_apply)
     };
 
     return test_run(tests, ARRAY_LEN(tests));

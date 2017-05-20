@@ -41,5 +41,10 @@ int matrix_product(matrix_t *m1, matrix_t *m2, matrix_t *dest);
 // Returns 0 on success.
 int matrix_add(matrix_t *m1, matrix_t *m2, matrix_t *dest);
 
+// matrix_apply applies the given function to all values and stores the
+// resulting matrix to dest.
+// dest can be the same as m. In this case, m is overwritten.
+void matrix_apply(matrix_t *m, matrix_t *dest, double (*f)(double));
+
 
 #endif
