@@ -4,7 +4,7 @@
 
 #include "test.h"
 #include "tools.h"
-#include "neuralnet.h"
+#include "matrix.h"
 
 static void print_matrix(matrix_t *m) {
     if (m == NULL) {

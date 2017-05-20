@@ -1,5 +1,5 @@
-#ifndef __NEURALNET_H__
-#define __NEURALNET_H__
+#ifndef __MATRIX_H__
+#define __MATRIX_H__
 
 #include <stdbool.h>
 

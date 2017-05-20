@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "neuralnet.h"
+#include "matrix.h"
 
 matrix_t *make_matrix(int rows, int cols, int capacity) {
     matrix_t *m = malloc(sizeof(matrix_t));
