@@ -137,12 +137,38 @@ static void test_matrix_apply(test_t *t) {
 }
 
 
+static void test_matrix_copy(test_t *t) {
+    struct {
+        int    rows, cols;
+        double *values;
+    }
+    tests[] = {
+        { 1, 3, (double[]){1, 3, 5 } }
+    };
+
+    matrix_t *original = make_matrix(0, 0, 0);
+    matrix_t *copy     = make_matrix(0, 0, 0);
+
+    for (int i = 0; i < ARRAY_LEN(tests); i++) {
+        matrix_initialize_from_values(original, tests[i].rows,
+                                      tests[i].cols, tests[i].values);
+
+        matrix_copy(original, copy);
+        CHECK_MATRIX_EQUAL(original, copy, .00001, __FILE__, __LINE__);
+    }
+
+    free_matrix(original);
+    free_matrix(copy);
+}
+
+
 int main(int argc, char **argv) {
     test_function_t tests[] = {
         TEST_FUNCTION(test_matrix_creation),
         TEST_FUNCTION(test_matrix_add),
         TEST_FUNCTION(test_matrix_product),
-        TEST_FUNCTION(test_matrix_apply)
+        TEST_FUNCTION(test_matrix_apply),
+        TEST_FUNCTION(test_matrix_copy)
     };
 
     return test_run(tests, ARRAY_LEN(tests));

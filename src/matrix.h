@@ -46,5 +46,10 @@ int matrix_add(matrix_t *m1, matrix_t *m2, matrix_t *dest);
 // dest can be the same as m. In this case, m is overwritten.
 void matrix_apply(matrix_t *m, matrix_t *dest, double (*f)(double));
 
+// matrix_copy copies the src matrix into dest.
+// dest must be a allocted matrix.
+// Return 0 on succes.
+int matrix_copy(matrix_t *src, matrix_t *dest);
+
 
 #endif

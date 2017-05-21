@@ -130,3 +130,16 @@ void matrix_apply(matrix_t *m, matrix_t *dest, double (*f)(double)) {
         dest->values[i] = f(m->values[i]);
     }
 }
+
+
+int matrix_copy(matrix_t *src, matrix_t *dest) {
+    int err = matrix_set_size(dest, src->num_rows, src->num_cols);
+
+    if (err != 0) {
+        return -1;
+    }
+
+    size_t size = sizeof(double) * src->num_rows * src->num_cols;
+    memcpy(dest->values, src->values, size);
+    return 0;
+}
