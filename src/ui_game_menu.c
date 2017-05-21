@@ -1,8 +1,6 @@
 #include "ui_game_menu.h"
 #include "ai.h"
 #include "graphics.h"
-#include "graphics_tb.h"
-#include "graphics_minimalist_sdl.h"
 #include "menu.h"
 #include "ui_menu.h"
 #include "ai_rand.h"
@@ -39,14 +37,10 @@ bool ui_game_menu(void                 *graphics_context,
         .label = "Play"
     };
 
-    menu_item_t empty_item = {
-        .type = MENU_ITEM_EMPTY,
-    };
-
     menu_item_t *items[] = {
         &player_goat_item,
         &player_tiger_item,
-        &empty_item,
+        &EMPTY_MENU_ITEM,
         &play_button_item
     };
 

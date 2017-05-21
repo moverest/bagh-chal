@@ -4,6 +4,7 @@
 
 #include "ui_game.h"
 #include "graphics.h"
+#include "ui_pause_menu.h"
 
 static void input_append_position(mvt_t                *input,
                                   possible_positions_t *possible_positions,
@@ -83,10 +84,11 @@ static void update_possible_positions(game_state_to_draw_t *state) {
 }
 
 
-void ui_game_main(void                 *graphics_context,
+bool ui_game_main(void                 *graphics_context,
                   graphics_callbacks_t graphics,
                   ai_callbacks_t       *tiger_ai,
-                  ai_callbacks_t       *goat_ai) {
+                  ai_callbacks_t       *goat_ai,
+                  char                 *winner) {
     char                 msg[256] = "";
     game_state_to_draw_t state    = {
         .game = game_new(),
@@ -120,7 +122,7 @@ void ui_game_main(void                 *graphics_context,
             graphics.wait_event(graphics_context, &event);
             switch (event.type) {
             case EVENT_QUIT:
-                stop = true;
+                stop = ui_pause_menu(graphics_context, graphics);
                 break;
 
             case EVENT_REDRAW:
@@ -149,7 +151,7 @@ void ui_game_main(void                 *graphics_context,
                     break;
 
                 case KEY_ESC:
-                    stop = true;
+                    stop = ui_pause_menu(graphics_context, graphics);
                     break;
 
                 default:
@@ -171,9 +173,7 @@ void ui_game_main(void                 *graphics_context,
 
     if (!stop) {
         reset_possible_positions(&state.possible_positions);
-        sprintf(msg, "%s wins", state.game->turn == TIGER_TURN ? "Goat" : "Tiger");
-        graphics.draw_game(graphics_context, &state);
-        graphics.wait_event(graphics_context, &event);
+        sprintf(winner, "%s", state.game->turn == TIGER_TURN ? "Goats" : "Tigers");
     }
 
 
@@ -184,4 +184,6 @@ void ui_game_main(void                 *graphics_context,
         goat_ai->free(goat_ai_context);
     }
     game_free(state.game);
+
+    return stop;
 }

@@ -273,6 +273,7 @@ void graphics_tb_draw_menu(void *context, menu_t *menu) {
             break;
 
         case MENU_ITEM_BUTTON:
+        case MENU_ITEM_TEXT:
             print_str(menu->items[i]->label, MENU_ITEM_COL, MENU_ITEM_ROW + i);
             break;
 

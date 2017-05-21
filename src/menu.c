@@ -4,16 +4,25 @@
 
 #include "menu.h"
 
+menu_item_t EMPTY_MENU_ITEM = {
+    .type = MENU_ITEM_EMPTY,
+};
 
 void menu_move_up(menu_t *menu) {
     if (menu->cursor <= 0) {
         return;
     }
 
-    do {
-        menu->cursor--;
-    } while (menu->cursor > 0 &&
-             menu->items[menu->cursor]->type == MENU_ITEM_EMPTY);
+    int i = menu->cursor - 1;
+    while (i >= 0) {
+        if ((menu->items[i]->type == MENU_ITEM_EMPTY) ||
+            (menu->items[i]->type == MENU_ITEM_TEXT)) {
+            i--;
+        } else {
+            menu->cursor = i;
+            return;
+        }
+    }
 }
 
 
@@ -22,10 +31,16 @@ void menu_move_down(menu_t *menu) {
         return;
     }
 
-    do {
-        menu->cursor++;
-    } while (menu->cursor < menu->num_item - 1 &&
-             menu->items[menu->cursor]->type == MENU_ITEM_EMPTY);
+    int i = menu->cursor + 1;
+    while (i < menu->num_item) {
+        if ((menu->items[i]->type == MENU_ITEM_EMPTY) ||
+            (menu->items[i]->type == MENU_ITEM_TEXT)) {
+            i++;
+        } else {
+            menu->cursor = i;
+            return;
+        }
+    }
 }
 
 

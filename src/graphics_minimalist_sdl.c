@@ -660,13 +660,13 @@ void graphics_draw_menu(void *context, menu_t *menu) {
 
     char str[256] = "";
 
-    SDL_RenderClear(sg->renderer);
-
     SDL_SetRenderDrawColor(sg->renderer,
                            BG_COLOR_R,
                            BG_COLOR_G,
                            BG_COLOR_B,
                            255);
+
+    SDL_RenderClear(sg->renderer);
 
     draw_menu_string(sg, menu->title, MENU_TITLE_X, MENU_TITLE_Y);
 
@@ -678,6 +678,7 @@ void graphics_draw_menu(void *context, menu_t *menu) {
             break;
 
         case MENU_ITEM_BUTTON:
+        case MENU_ITEM_TEXT:
             draw_menu_string(sg, menu->items[i]->label, MENU_ITEM_COL, MENU_ITEM_ROW + i * MENU_LINE_ITEMS_SPACING);
             break;
 

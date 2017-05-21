@@ -9,7 +9,6 @@
 #include "ui_game_menu.h"
 #include "menu.h"
 #include "graphics.h"
-#include "graphics_tb.h"
 #include "ai_rand.h"
 #include "ai.h"
 #include "ui_game.h"

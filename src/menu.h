@@ -8,6 +8,7 @@
 typedef enum {
     MENU_ITEM_SELECT,
     MENU_ITEM_BUTTON,
+    MENU_ITEM_TEXT,
     MENU_ITEM_EMPTY
 } item_type_t;
 
@@ -34,5 +35,7 @@ void menu_switch_right(menu_t *menu);
 
 bool menu_enter(menu_t *menu);
 bool menu_esc(menu_t *menu);
+
+menu_item_t EMPTY_MENU_ITEM;
 
 #endif
