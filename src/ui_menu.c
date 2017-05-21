@@ -1,5 +1,4 @@
 #include "ui_menu.h"
-#include "graphics.h"
 
 bool ui_menu(void *graphics_context, graphics_callbacks_t graphics, menu_t *menu) {
     event_t event;

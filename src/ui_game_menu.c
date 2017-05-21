@@ -1,19 +1,17 @@
+#include "ui_menu.h"
 #include "ui_game_menu.h"
-#include "ai.h"
 #include "graphics.h"
 #include "menu.h"
-#include "ui_menu.h"
-#include "ai_rand.h"
 #include "tools.h"
+
+#include "ai.h"
+#include "ai_rand.h"
 
 bool ui_game_menu(void                 *graphics_context,
                   graphics_callbacks_t graphics,
                   ai_callbacks_t       **tiger_ai,
                   ai_callbacks_t       **goat_ai) {
-    char           *ai_items[] = {
-        "Human",
-        "Random"
-    };
+    char           *ai_items[]          = { "Human", "Random" };
     ai_callbacks_t *ai_item_callbacks[] = { NULL, &ai_rand_callbacks };
 
     menu_item_t player_goat_item = {

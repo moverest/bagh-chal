@@ -1,12 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
 
 #include "graphics_minimalist_sdl.h"
-#include "menu.h"
-#include "ui_menu.h"
 #include "menu_test.h"
 
 static void test_graphics_minimalist_sdl() {

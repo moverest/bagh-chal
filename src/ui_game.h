@@ -1,11 +1,8 @@
 #ifndef __UI_GAME_H__
 #define __UI_GAME_H__
 
-#include "models.h"
 #include "graphics.h"
-#include "game.h"
 #include "ai.h"
-#include "ui_pause_menu.h"
 
 // ui_main is the main function that manage the ui.
 // It takes two arguments that are the callback to be used to interact with the

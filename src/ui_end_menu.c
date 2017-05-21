@@ -1,9 +1,9 @@
 #include <stdio.h>
 
-#include "ui_game_menu.h"
+#include "ui_end_menu.h"
+#include "ui_menu.h"
 #include "graphics.h"
 #include "menu.h"
-#include "ui_menu.h"
 #include "tools.h"
 
 bool ui_end_menu(void                 *graphics_context,

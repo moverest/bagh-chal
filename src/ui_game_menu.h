@@ -3,8 +3,6 @@
 
 #include "ai.h"
 #include "graphics.h"
-#include "menu.h"
-#include "ui_menu.h"
 
 bool ui_game_menu(void                 *graphics_context,
                   graphics_callbacks_t graphics,

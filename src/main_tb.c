@@ -1,10 +1,8 @@
 #include <stdio.h>
 
-#include "ui_menu.h"
 #include "menu.h"
 #include "graphics.h"
 #include "graphics_tb.h"
-#include "ai_rand.h"
 #include "ui_main.h"
 
 
