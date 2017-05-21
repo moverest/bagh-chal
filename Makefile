@@ -17,8 +17,8 @@ $(BUILD_DIR)/test_game: $(BUILD_DIR) $(foreach f, models.o test.o game.o ai_rand
 $(BUILD_DIR)/test_matrix: $(BUILD_DIR) $(foreach f, matrix.o test.o, $(BUILD_DIR)/$f)
 	$(CC) -o $@ $(SRC_DIR)/test_matrix.c $(foreach f, matrix.o test.o, $(BUILD_DIR)/$f)
 
-$(BUILD_DIR)/test_neuralnet: $(BUILD_DIR) $(foreach f, neuralnet.o matrix.o test.o, $(BUILD_DIR)/$f)
-	$(CC) -o $@ $(SRC_DIR)/test_neuralnet.c $(foreach f, neuralnet.o matrix.o test.o, $(BUILD_DIR)/$f)
+$(BUILD_DIR)/test_neuralnet: $(BUILD_DIR) $(foreach f, neuralnet.o matrix.o test.o randn.o, $(BUILD_DIR)/$f)
+	$(CC) -o $@ $(SRC_DIR)/test_neuralnet.c $(foreach f, neuralnet.o matrix.o test.o randn.o, $(BUILD_DIR)/$f)
 
 $(BUILD_DIR)/test_graphics_tb: $(BUILD_DIR) $(foreach f, models.o graphics_tb.o graphics_test.o, $(BUILD_DIR)/$f)
 	$(CC) $(TERMBOX_FLAG) -o $@ $(SRC_DIR)/test_graphics_tb.c $(foreach f, models.o graphics_tb.o graphics_test.o, $(BUILD_DIR)/$f)
@@ -88,6 +88,9 @@ $(BUILD_DIR)/matrix.o: $(BUILD_DIR)
 
 $(BUILD_DIR)/neuralnet.o: $(BUILD_DIR)
 	$(CC) -c $(SRC_DIR)/neuralnet.c -o $@
+
+$(BUILD_DIR)/randn.o: $(BUILD_DIR)
+	$(CC) -c $(SRC_DIR)/randn.c -o $@
 
 $(BUILD_DIR)/test_test: $(BUILD_DIR) $(BUILD_DIR)/test.o
 	$(CC) $(BUILD_DIR)/test.o $(SRC_DIR)/test_test.c -o $@
