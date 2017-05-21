@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include <math.h>
 
 #include "neuralnet.h"
 #include "matrix.h"
@@ -212,8 +213,23 @@ void neuralnet_randomize(neuralnet_t *net) {
 }
 
 
+static double sigmoid(double x) {
+    return 1. / (1. + exp(-x));
+}
+
+
 int neuralnet_feedforward(neuralnet_t *net,
                           matrix_t *in, matrix_t *out) {
-    exit(-1); // TODO: Implement
+    matrix_t *temp = make_matrix(0, 0, 0);
+
+    matrix_copy(in, out);
+    for (int i = 0; i < net->num_layers - 1; i++) {
+        matrix_product(net->weights[i], out, temp);
+        matrix_add(temp, net->biases[i], out);
+        matrix_apply(out, out, sigmoid);
+    }
+
+    free_matrix(temp);
+
     return 0;
 }
