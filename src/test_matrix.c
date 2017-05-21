@@ -7,20 +7,6 @@
 #include "matrix.h"
 #include "test_matrix.h"
 
-static void print_matrix(matrix_t *m) {
-    if (m == NULL) {
-        puts("null matrix");
-        return;
-    }
-
-    printf("{r: %d, c: %d, cap: %d, v: ", m->num_rows, m->num_cols, m->capacity);
-    int max = m->num_rows * m->num_cols;
-    for (int i = 0; i < max; i++) {
-        printf("%f ", m->values[i]);
-    }
-    puts("}\n");
-}
-
 
 static bool matrix_equals(matrix_t *m1, matrix_t *m2, double error) {
     if ((m1 == NULL) || (m2 == NULL)) {

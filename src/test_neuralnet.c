@@ -16,6 +16,13 @@ void test_neuralnet_creation(test_t *t) {
                           __FILE__, __LINE__);
     }
 
+    neuralnet_randomize(net);
+    for (int i = 0; i < net->num_layers - 1; i++) {
+        printf("weights[%d]: ", i);
+        print_matrix(net->weights[i]);
+        printf("biases[%d]: ", i);
+        print_matrix(net->biases[i]);
+    }
 
     free(net);
 }

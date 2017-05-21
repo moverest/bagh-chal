@@ -3,6 +3,21 @@
 
 #include "test.h"
 
+static void print_matrix(matrix_t *m) {
+    if (m == NULL) {
+        puts("null matrix");
+        return;
+    }
+
+    printf("{r: %d, c: %d, cap: %d, v: ", m->num_rows, m->num_cols, m->capacity);
+    int max = m->num_rows * m->num_cols;
+    for (int i = 0; i < max; i++) {
+        printf("%f ", m->values[i]);
+    }
+    puts("}\n");
+}
+
+
 #define CHECK_MATRIX_SIZE(m, rows, cols, cap, file, line)         \
     if (m == NULL) {                                              \
         printf("%s:%d: Got a NULL matrix.\n", file, line);        \

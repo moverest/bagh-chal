@@ -3,6 +3,7 @@
 
 #include "neuralnet.h"
 #include "matrix.h"
+#include "randn.h"
 
 neuralnet_t *make_neuralnet(int num_layers, int *sizes) {
     neuralnet_t *net = malloc(sizeof(neuralnet_t));
@@ -84,8 +85,16 @@ int neuralnet_save(neuralnet_t *net, char *filename) {
 }
 
 
+static double randn_f(double v) {
+    return randn();
+}
+
+
 void neuralnet_randomize(neuralnet_t *net) {
-    exit(-1); // TODO: Implement
+    for (int i = 0; i < net->num_layers - 1; i++) {
+        matrix_apply(net->weights[i], net->weights[i], randn_f);
+        matrix_apply(net->biases[i], net->biases[i], randn_f);
+    }
 }
 
 
