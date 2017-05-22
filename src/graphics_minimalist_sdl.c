@@ -642,15 +642,32 @@ void graphics_minimalist_sdl_draw_game(void *context, game_state_to_draw_t *stat
 }
 
 
-void draw_menu_string(void *context, char *str, int x, int y) {
-    graphics_minimalist_sdl_t *sg = context;
-
+void draw_menu_string(graphics_minimalist_sdl_t *sg, char *str, int x, int y, bool selected) {
     if (str[0] == '\0') {
         return;
     }
 
     SDL_Texture *texture = str_to_texture(sg, str);
     draw_texture(sg, texture, x, y);
+
+    if (selected) {
+        SDL_Rect rect;
+        rect.x = x;
+        rect.y = y;
+        SDL_QueryTexture(texture, NULL, NULL, &rect.w, &rect.h);
+
+        rect.x -= FONT_SIZE / 5;
+        rect.y -= FONT_SIZE / 5;
+
+        rect.w += FONT_SIZE / 5 * 2;
+        rect.h += FONT_SIZE / 5 * 2;
+
+        SDL_SetRenderDrawColor(sg->renderer,
+                               TXT_COLOR_R, TXT_COLOR_G, TXT_COLOR_B, 255);
+
+        SDL_RenderDrawRect(sg->renderer, &rect);
+    }
+
     SDL_DestroyTexture(texture);
 }
 
@@ -668,26 +685,30 @@ void graphics_draw_menu(void *context, menu_t *menu) {
 
     SDL_RenderClear(sg->renderer);
 
-    draw_menu_string(sg, menu->title, MENU_TITLE_X, MENU_TITLE_Y);
+    draw_menu_string(sg, menu->title, MENU_TITLE_X, MENU_TITLE_Y, false);
 
     for (int i = 0; i < menu->num_item; i++) {
+        bool selected = i == menu->cursor;
+
         switch (menu->items[i]->type) {
         case MENU_ITEM_SELECT:
             sprintf(str, "%s : %s", menu->items[i]->label, menu->items[i]->choices[menu->items[i]->choice]);
-            draw_menu_string(sg, str, MENU_ITEM_COL, MENU_ITEM_ROW + i * MENU_LINE_ITEMS_SPACING);
+            draw_menu_string(sg, str, MENU_ITEM_COL,
+                             MENU_ITEM_ROW + i * MENU_LINE_ITEMS_SPACING,
+                             selected);
             break;
 
         case MENU_ITEM_BUTTON:
         case MENU_ITEM_TEXT:
-            draw_menu_string(sg, menu->items[i]->label, MENU_ITEM_COL, MENU_ITEM_ROW + i * MENU_LINE_ITEMS_SPACING);
+            draw_menu_string(sg, menu->items[i]->label, MENU_ITEM_COL,
+                             MENU_ITEM_ROW + i * MENU_LINE_ITEMS_SPACING,
+                             selected);
             break;
 
         case MENU_ITEM_EMPTY:
             break;
         }
     }
-
-    draw_menu_string(sg, "|", MENU_CURSOR_COL, MENU_ITEM_ROW + menu->cursor * MENU_LINE_ITEMS_SPACING);
 
     SDL_RenderPresent(sg->renderer);
 }
