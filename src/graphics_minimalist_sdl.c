@@ -423,13 +423,6 @@ static void draw_board(graphics_minimalist_sdl_t *sg, game_state_to_draw_t *stat
                                        255);
                 draw_select_icon(sg, cell_x, cell_y,
                                  cell_width, cell_height);
-            } else if (possible) {
-                SDL_Rect    tag_texture_rect;
-                SDL_Texture *tag_texture = get_tag_texture_from_pos(sg, pos);
-                SDL_QueryTexture(tag_texture, NULL, NULL, &tag_texture_rect.w, &tag_texture_rect.h);
-                tag_texture_rect.x = BOARD_X + pos.c * POSITION_SPACING_WIDTH - tag_texture_rect.w / 2;
-                tag_texture_rect.y = BOARD_Y + pos.r * POSITION_SPACING_HEIGHT - tag_texture_rect.h / 2;
-                SDL_RenderCopy(sg->renderer, tag_texture, NULL, &tag_texture_rect);
             } else if (cell != EMPTY_CELL) {
                 switch (cell) {
                 case TIGER_CELL:
@@ -453,6 +446,17 @@ static void draw_board(graphics_minimalist_sdl_t *sg, game_state_to_draw_t *stat
                 default:
                     break;
                 }
+            }
+
+            if (possible) {
+                SDL_Rect    tag_texture_rect;
+                SDL_Texture *tag_texture = get_tag_texture_from_pos(sg, pos);
+                SDL_QueryTexture(tag_texture, NULL, NULL, &tag_texture_rect.w, &tag_texture_rect.h);
+                tag_texture_rect.w /= 1.5;
+                tag_texture_rect.h /= 1.5;
+                tag_texture_rect.x  = BOARD_X + pos.c * POSITION_SPACING_WIDTH - tag_texture_rect.w / 2;
+                tag_texture_rect.y  = BOARD_Y + pos.r * POSITION_SPACING_HEIGHT - tag_texture_rect.h / 2;
+                SDL_RenderCopy(sg->renderer, tag_texture, NULL, &tag_texture_rect);
             }
         }
     }
