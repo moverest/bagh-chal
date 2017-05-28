@@ -22,24 +22,10 @@ static bool board_equals(board_t *b1, board_t *b2) {
 
 
 static bool game_equals(game_t *g1, game_t *g2) {
-    if (g1->turn != g2->turn) {
-        return false;
-    }
-
-    if (g1->num_goats_to_put != g2->num_goats_to_put) {
-        return false;
-    }
-
-    if (g1->num_eaten_goats != g2->num_eaten_goats) {
-        return false;
-    }
-
-    if (!board_equals(&g1->board, &g2->board)) {
-        return false;
-    }
-
-
-    return true;
+    return g1->turn == g2->turn &&
+           g1->num_goats_to_put == g2->num_goats_to_put &&
+           g1->num_eaten_goats == g2->num_eaten_goats &&
+           board_equals(&g1->board, &g2->board);
 }
 
 
