@@ -288,7 +288,7 @@ bool game_do_mvt(game_t *game, mvt_t mvt) {
 }
 
 
-// is_blocked returns tree if no move can be done.
+// is_blocked returns true if no move can be done.
 static bool is_blocked(board_t *board, player_turn_t turn) {
     cell_state_t movable_cell = turn == TIGER_TURN ? TIGER_CELL : GOAT_CELL;
 
