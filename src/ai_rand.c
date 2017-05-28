@@ -38,33 +38,18 @@ static position_t get_random_position(possible_positions_t *possible_pos) {
 }
 
 
-mvt_t ai_rand_get_goat_mvt(void *context, game_t *game) {
-    possible_positions_t possible_pos;
-
-    game_get_possible_from_positions(game, &possible_pos);
-    mvt_t mvt = {
-        get_random_position(&possible_pos),
-        { POSITION_NOT_SET,                POSITION_NOT_SET}
-    };
-
-
-    if ((game->turn == GOAT_TURN) && (game->num_goats_to_put > 0)) {
-        return mvt;
-    }
-
-    game_get_possible_to_positions(game, mvt.from, &possible_pos);
-    mvt.to = get_random_position(&possible_pos);
-
-    return mvt;
-}
-
-
-mvt_t ai_rand_get_tiger_mvt(void *context, game_t *game) {
+mvt_t ai_rand_get_mvt(void *context, game_t *game) {
     possible_positions_t possible_pos;
     mvt_t                mvt;
 
     game_get_possible_from_positions(game, &possible_pos);
     mvt.from = get_random_position(&possible_pos);
+
+    if ((game->turn == GOAT_TURN) && (game->num_goats_to_put > 0)) {
+        mvt.to.c = POSITION_NOT_SET;
+        mvt.to.r = POSITION_NOT_SET;
+        return mvt;
+    }
 
     game_get_possible_to_positions(game, mvt.from, &possible_pos);
     mvt.to = get_random_position(&possible_pos);
@@ -76,6 +61,6 @@ mvt_t ai_rand_get_tiger_mvt(void *context, game_t *game) {
 ai_callbacks_t ai_rand_callbacks = {
     .new           = ai_rand_new,
     .free          = ai_rand_free,
-    .get_goat_mvt  = ai_rand_get_goat_mvt,
-    .get_tiger_mvt = ai_rand_get_tiger_mvt
+    .get_goat_mvt  = ai_rand_get_mvt,
+    .get_tiger_mvt = ai_rand_get_mvt
 };
