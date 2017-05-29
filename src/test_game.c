@@ -344,7 +344,7 @@ static void test_undo(test_t *t) {
     int num_mvt = 0;
 
     while (!game_is_done(game)) {
-        mvt = ai_rand_get_goat_mvt(NULL, game);
+        mvt = ai_rand_get_mvt(NULL, game);
         game_do_mvt(game, mvt);
         num_mvt++;
     }
