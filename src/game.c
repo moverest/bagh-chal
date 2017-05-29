@@ -378,4 +378,6 @@ int game_undo(game_t *game) {
         game->turn = TIGER_TURN;
         return 0;
     }
+
+    return 2;
 }
