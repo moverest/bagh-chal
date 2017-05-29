@@ -1,7 +1,7 @@
 #!/bin/bash
 
 build_dir=build
-tests="game matrix neuralnet test"
+tests="game matrix neuralnet test stack"
 
 for t in $tests
 do
