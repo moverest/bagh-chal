@@ -4,12 +4,14 @@
 #include <stdbool.h>
 
 #include "models.h"
+#include "stack.h"
 
 typedef struct {
     board_t       board;
     player_turn_t turn;
     int           num_goats_to_put;
     int           num_eaten_goats;
+    stack_t       *history;
 } game_t;
 
 // game_reset resets the game.
@@ -41,5 +43,9 @@ bool game_do_mvt(game_t *g, mvt_t mvt);
 // The looser can be retrived by looking at `game.turn`.
 // If `game.turn == TIGER_TURN`, tigers have lost the game and goats won.
 bool game_is_done(game_t *g);
+
+// game_undo undoes the last movement.
+// Returns 0 on success.
+int game_undo(game_t *g);
 
 #endif

@@ -137,14 +137,24 @@ bool ui_game_main(void                 *graphics_context,
             case EVENT_KEY:
                 switch (event.key) {
                 case KEY_CH:
-                    if (event.ch == 'Q') {
+                    switch (event.ch) {
+                    case 'Q':
                         stop = true;
-                    } else {
+                        break;
+
+                    case 'U':
+                        if ((tiger_ai != NULL) || (goat_ai != NULL)) {
+                            game_undo(state.game);
+                        }
+                        game_undo(state.game);
+                        break;
+
+                    default:
                         input_append_from_tag(&state.input,
                                               &state.possible_positions,
                                               event.ch);
-                        break;
                     }
+                    break;
 
                 case KEY_BACKSPACE:
                     input_backspace(&state.input);

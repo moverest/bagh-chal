@@ -6,7 +6,7 @@
 #include "models.h"
 #include "graphics.h"
 
-typedef struct {}   graphics_tb_t;
+typedef struct {} graphics_tb_t;
 
 // graphics_tb initializes the graphic module.
 graphics_tb_t *graphics_tb_init();

@@ -7,6 +7,8 @@
 game_t *game_new() {
     game_t *new_game = malloc(sizeof(game_t));
 
+    new_game->history = NULL;
+
     game_reset(new_game);
     return new_game;
 }
@@ -14,6 +16,7 @@ game_t *game_new() {
 
 // See header.
 void game_free(game_t *g) {
+    free_stack(g->history);
     free(g);
 }
 
@@ -39,6 +42,12 @@ void game_reset(game_t *g) {
     board_set_cell(&g->board, (position_t){0, 4 }, TIGER_CELL);
     board_set_cell(&g->board, (position_t){4, 0 }, TIGER_CELL);
     board_set_cell(&g->board, (position_t){4, 4 }, TIGER_CELL);
+
+    if (g->history != NULL) {
+        free_stack(g->history);
+    }
+
+    g->history = new_stack(sizeof(mvt_t), 64);
 }
 
 
@@ -226,6 +235,10 @@ bool game_do_mvt(game_t *game, mvt_t mvt) {
         board_set_cell(&game->board, mvt.from, GOAT_CELL);
         game->num_goats_to_put--;
         game->turn = TIGER_TURN;
+
+        mvt.to.c = POSITION_NOT_SET;
+        mvt.to.r = POSITION_NOT_SET;
+        stack_push(game->history, &mvt);
         return true;
     }
 
@@ -259,6 +272,8 @@ bool game_do_mvt(game_t *game, mvt_t mvt) {
         board_set_cell(&game->board, mvt.from, EMPTY_CELL);
         board_set_cell(&game->board, mvt.to, cell_state_to_move);
         game->turn = game->turn == GOAT_TURN ? TIGER_TURN : GOAT_TURN;
+
+        stack_push(game->history, &mvt);
         return true;
 
     case 2:     // We are eating a goat.
@@ -281,6 +296,8 @@ bool game_do_mvt(game_t *game, mvt_t mvt) {
         board_set_cell(&game->board, mvt.to, TIGER_CELL);
         game->num_eaten_goats++;
         game->turn = GOAT_TURN;
+
+        stack_push(game->history, &mvt);
         return true;
     }
 
@@ -316,4 +333,49 @@ static bool is_blocked(board_t *board, player_turn_t turn) {
 // See header.
 bool game_is_done(game_t *game) {
     return game->num_eaten_goats > 4 || is_blocked(&game->board, TIGER_TURN);
+}
+
+
+int game_undo(game_t *game) {
+    // We assume that the movement in the history are valid.
+    // We do as little as possible to indentify the different cases.
+    if (stack_is_empty(game->history)) {
+        return 1;
+    }
+
+    mvt_t mvt;
+    stack_pop(game->history, &mvt);
+
+    if (!position_is_set(mvt.to)) {
+        board_set_cell(&game->board, mvt.from, EMPTY_CELL);
+        game->num_goats_to_put++;
+        game->turn = GOAT_TURN;
+        return 0;
+    }
+
+    switch (MAX(abs(mvt.to.c - mvt.from.c), abs(mvt.to.r - mvt.from.r))) {
+    case 1:
+        ;
+        cell_state_t cell_state_moved = board_get_cell(&game->board, mvt.to);
+
+
+        board_set_cell(&game->board, mvt.to, EMPTY_CELL);
+        board_set_cell(&game->board, mvt.from, cell_state_moved);
+        game->turn = game->turn == GOAT_TURN ? TIGER_TURN : GOAT_TURN;
+        return 0;
+
+    case 2:
+        ;
+        position_t eaten_goat_pos = {
+            (mvt.to.c + mvt.from.c) / 2,
+            (mvt.to.r + mvt.from.r) / 2
+        };
+
+        board_set_cell(&game->board, mvt.to, EMPTY_CELL);
+        board_set_cell(&game->board, eaten_goat_pos, GOAT_CELL);
+        board_set_cell(&game->board, mvt.from, TIGER_CELL);
+        game->num_eaten_goats--;
+        game->turn = TIGER_TURN;
+        return 0;
+    }
 }

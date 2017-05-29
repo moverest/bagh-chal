@@ -337,10 +337,44 @@ static void test_ai_rand(test_t *t) {
 }
 
 
+static void test_undo(test_t *t) {
+    game_t *game = game_new();
+    mvt_t  mvt;
+
+    int num_mvt = 0;
+
+    while (!game_is_done(game)) {
+        mvt = ai_rand_get_goat_mvt(NULL, game);
+        game_do_mvt(game, mvt);
+        num_mvt++;
+    }
+
+    while (num_mvt > 0) {
+        int err = game_undo(game);
+        if (err) {
+            printf("%s:%d: Error while undoing movements %d\n",
+                   __FILE__, __LINE__, num_mvt);
+            test_fail(t);
+        }
+
+        num_mvt--;
+    }
+
+    if (!game_undo(game)) {
+        printf("%s:%d: There should not be any more movements to undo\n",
+               __FILE__, __LINE__);
+        test_fail(t);
+    }
+
+    free(game);
+}
+
+
 int main(int argc, char **argv) {
     test_function_t tests[] = {
         TEST_FUNCTION(test_game_begin),
-        TEST_FUNCTION(test_ai_rand)
+        TEST_FUNCTION(test_ai_rand),
+        TEST_FUNCTION(test_undo)
     };
 
     return test_run(tests, ARRAY_LEN(tests));
