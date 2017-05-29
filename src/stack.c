@@ -75,3 +75,8 @@ int stack_pop(stack_t *stack, void *dest) {
 bool stack_is_empty(stack_t *stack) {
     return stack->num_elements <= 0;
 }
+
+
+void stack_reset(stack_t *stack) {
+    stack->num_elements = 0;
+}

@@ -33,4 +33,7 @@ int stack_pop(stack_t *stack, void *dest);
 // stack_is_empty returns true if the given stack is empty. False otherwhise.
 bool stack_is_empty(stack_t *stack);
 
+// stack_reset clears all the elements on the stack.
+void stack_reset(stack_t *stack);
+
 #endif
