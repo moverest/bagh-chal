@@ -3,11 +3,21 @@
 #include "game.h"
 #include "tools.h"
 
+#define DEFAULT_HISTORY_STACK_SIZE    64
+
 // See header.
 game_t *game_new() {
     game_t *new_game = malloc(sizeof(game_t));
 
-    new_game->history = NULL;
+    if (new_game == NULL) {
+        return NULL;
+    }
+
+    new_game->history = new_stack(sizeof(mvt_t), DEFAULT_HISTORY_STACK_SIZE);
+    if (new_game->history == NULL) {
+        free(new_game);
+        return NULL;
+    }
 
     game_reset(new_game);
     return new_game;
@@ -43,11 +53,7 @@ void game_reset(game_t *g) {
     board_set_cell(&g->board, (position_t){4, 0 }, TIGER_CELL);
     board_set_cell(&g->board, (position_t){4, 4 }, TIGER_CELL);
 
-    if (g->history != NULL) {
-        free_stack(g->history);
-    }
-
-    g->history = new_stack(sizeof(mvt_t), 64);
+    stack_reset(g->history);
 }
 
 
