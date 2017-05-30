@@ -720,7 +720,37 @@ void graphics_draw_menu(void *context, menu_t *menu) {
 }
 
 
-void graphics_minimalist_sdl_wait_event(void *context, event_t *event) {
+static int get_label_clickable_length(menu_t *menu, int selected_menu_item) {
+    switch (menu->items[selected_menu_item]->type) {
+    case MENU_ITEM_SELECT:
+        return strlen(menu->items[selected_menu_item]->label)
+               + strlen(menu->items[selected_menu_item]->choices[menu->items[selected_menu_item]->choice])
+               + 3;
+
+        break;
+
+    case MENU_ITEM_BUTTON:
+        return strlen(menu->items[selected_menu_item]->label);
+
+        break;
+
+    default:
+        return 0;
+
+        break;
+    }
+}
+
+
+void graphics_minimalist_sdl_wait_game_event(void *context, event_t *event) {
+    graphics_minimalist_sdl_wait_menu_event(context, event, NULL);
+}
+
+
+void graphics_minimalist_sdl_wait_menu_event(void *context, event_t *event, menu_t *menu) {
+    int menu_label_length;
+    int selected_menu_item;
+
     while (1) {
         SDL_Event sdl_event;
         SDL_WaitEvent(&sdl_event);
@@ -786,28 +816,30 @@ void graphics_minimalist_sdl_wait_event(void *context, event_t *event) {
 
         case SDL_MOUSEBUTTONDOWN:
             ;
-            // Positions relative to the board.
-            int x = sdl_event.button.x - (BOARD_X - POSITION_WIDTH / 2);
-            int y = sdl_event.button.y - (BOARD_Y - POSITION_HEIGHT / 2);
+            if (menu != NULL) {
+            } else {
+                // Positions relative to the board.
+                int x = sdl_event.button.x - (BOARD_X - POSITION_WIDTH / 2);
+                int y = sdl_event.button.y - (BOARD_Y - POSITION_HEIGHT / 2);
 
+                if ((x > 0) && ((x < (4 * POSITION_SPACING_WIDTH + POSITION_WIDTH)) &&
+                                (y > 0) && (x < 4 * POSITION_SPACING_HEIGHT + POSITION_HEIGHT))) {
+                    // We are in the board.
 
-            if ((x > 0) && ((x < (4 * POSITION_SPACING_WIDTH + POSITION_WIDTH)) &&
-                            (y > 0) && (x < 4 * POSITION_SPACING_HEIGHT + POSITION_HEIGHT))) {
-                // We are in the board.
+                    position_t pos = {
+                        x / POSITION_SPACING_WIDTH,
+                        y / POSITION_SPACING_HEIGHT
+                    };
 
-                position_t pos = {
-                    x / POSITION_SPACING_WIDTH,
-                    y / POSITION_SPACING_HEIGHT
-                };
-
-                // Positions relative to the placement.
-                int x_placement = x % 5;
-                int y_placement = y % 5;
-                if ((x_placement < POSITION_SPACING_WIDTH) &&
-                    (y_placement < POSITION_SPACING_HEIGHT)) {
-                    event->type     = EVENT_POSITION;
-                    event->position = pos;
-                    return;
+                    // Positions relative to the placement.
+                    int x_placement = x % 5;
+                    int y_placement = y % 5;
+                    if ((x_placement < POSITION_SPACING_WIDTH) &&
+                        (y_placement < POSITION_SPACING_HEIGHT)) {
+                        event->type     = EVENT_POSITION;
+                        event->position = pos;
+                        return;
+                    }
                 }
             }
         }
@@ -859,7 +891,8 @@ void graphics_minimalist_sdl_quit(graphics_minimalist_sdl_t *sg) {
 
 
 graphics_callbacks_t graphics_minimalist_sdl_callbacks = {
-    .draw_game  = graphics_minimalist_sdl_draw_game,
-    .wait_event = graphics_minimalist_sdl_wait_event,
-    .draw_menu  = graphics_draw_menu
+    .draw_game       = graphics_minimalist_sdl_draw_game,
+    .wait_event_game = graphics_minimalist_sdl_wait_game_event,
+    .wait_event_menu = graphics_minimalist_sdl_wait_menu_event,
+    .draw_menu       = graphics_draw_menu
 };

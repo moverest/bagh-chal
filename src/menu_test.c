@@ -9,7 +9,7 @@
 #define WAIT_BEFORE_NEXT_TEST()                                  \
     do {                                                         \
         graphics.draw_menu(context, &menu);                      \
-        graphics.wait_event(context, &event);                    \
+        graphics.wait_event_menu(context, &event, &menu);        \
         if (event.type == EVENT_QUIT) {                          \
             return true;                                         \
         }                                                        \

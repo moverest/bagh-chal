@@ -24,7 +24,8 @@ typedef struct {
 // Implement graphics. See graphics.h for details.
 graphics_minimalist_sdl_t *graphics_minimalist_sdl_init();
 void graphics_minimalist_sdl_draw_game(void *context, game_state_to_draw_t *state);
-void graphics_minimalist_sdl_wait_event(void *context, event_t *event);
+void graphics_minimalist_sdl_wait_game_event(void *context, event_t *event);
+void graphics_minimalist_sdl_wait_menu_event(void *context, event_t *event, menu_t *menu);
 void graphics_minimalist_sdl_quit(graphics_minimalist_sdl_t *tg);
 
 extern graphics_callbacks_t graphics_minimalist_sdl_callbacks;

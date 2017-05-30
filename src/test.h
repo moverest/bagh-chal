@@ -17,7 +17,7 @@ typedef struct {
 // retaining its name to be displayed.
 #define TEST_FUNCTION_NAME_MAX_SIZE    256
 typedef struct {
-    void (*f)(test_t * t);
+    void (*f)(test_t *t);
     char name[TEST_FUNCTION_NAME_MAX_SIZE];
 } test_function_t;
 

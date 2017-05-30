@@ -7,7 +7,7 @@
 #define TEST_EVENT_KEY(key_name)                            \
     sprintf(state.msg, "Press %s", # key_name);             \
     graphics.draw_game(context, &state);                    \
-    graphics.wait_event(context, &event);                   \
+    graphics.wait_event_game(context, &event);              \
     if (event.type != EVENT_KEY || event.key != key_name) { \
         sprintf(err_msg, "Expected %s", # key_name);        \
         return false;                                       \
@@ -16,7 +16,7 @@
 #define TEST_EVENT_CH(ch_name)                                      \
     sprintf(state.msg, "Press %c", ch_name);                        \
     graphics.draw_game(context, &state);                            \
-    graphics.wait_event(context, &event);                           \
+    graphics.wait_event_game(context, &event);                      \
     if (event.type != EVENT_KEY) {                                  \
         sprintf(err_msg, "Expected %c", ch_name);                   \
         return false;                                               \
@@ -30,7 +30,7 @@
     sprintf(state.msg, "Click on %c (%d,%d)",                         \
             position_get_tag((position_t){pos1, pos2 }), pos1, pos2); \
     graphics.draw_game(context, &state);                              \
-    graphics.wait_event(context, &event);                             \
+    graphics.wait_event_game(context, &event);                        \
     if (event.type != EVENT_POSITION) {                               \
         sprintf(err_msg, "Expected (%d,%d)", pos1, pos2);             \
         return false;                                                 \
@@ -44,7 +44,7 @@
 #define WAIT_BEFORE_NEXT_TEST()                                  \
     do {                                                         \
         graphics.draw_game(context, &state);                     \
-        graphics.wait_event(context, &event);                    \
+        graphics.wait_event_game(context, &event);               \
         if (event.type == EVENT_QUIT) {                          \
             return true;                                         \
         }                                                        \

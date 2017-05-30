@@ -8,7 +8,7 @@ bool ui_menu(void *graphics_context, graphics_callbacks_t graphics, menu_t *menu
 
     while (!stop && !quit) {
         graphics.draw_menu(graphics_context, menu);
-        graphics.wait_event(graphics_context, &event);
+        graphics.wait_event_menu(graphics_context, &event, menu);
         switch (event.type) {
         case EVENT_KEY:
             switch (event.key) {
@@ -40,6 +40,15 @@ bool ui_menu(void *graphics_context, graphics_callbacks_t graphics, menu_t *menu
 
         case EVENT_QUIT:
             quit = true;
+            break;
+
+        case EVENT_MENU_ITEM_CLICKED:
+            if ((event.menu_item < menu->num_item) &&
+                (event.menu_item >= 0) &&
+                (menu->items[event.menu_item]->type != MENU_ITEM_EMPTY)) {
+                menu->cursor = event.menu_item;
+                stop         = menu_click(menu, event.menu_item);
+            }
             break;
 
         default:

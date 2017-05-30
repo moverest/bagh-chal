@@ -301,7 +301,28 @@ void graphics_tb_draw_game(void *context, game_state_to_draw_t *state) {
 }
 
 
-void graphics_tb_wait_event(void *context, event_t *event) {
+static int get_label_clickable_length(menu_t *menu, int selected_menu_item) {
+    switch (menu->items[selected_menu_item]->type) {
+    case MENU_ITEM_SELECT:
+        return strlen(menu->items[selected_menu_item]->label)
+               + strlen(menu->items[selected_menu_item]->choices[menu->items[selected_menu_item]->choice])
+               + 3;
+
+    case MENU_ITEM_BUTTON:
+        return strlen(menu->items[selected_menu_item]->label);
+
+    default:
+        return 0;
+    }
+}
+
+
+void graphics_tb_wait_game_event(void *context, event_t *event) {
+    graphics_tb_wait_menu_event(context, event, NULL);
+}
+
+
+void graphics_tb_wait_menu_event(void *context, event_t *event, menu_t *menu) {
     struct tb_event tevent;
     int             stop = 0;
 
@@ -355,26 +376,41 @@ void graphics_tb_wait_event(void *context, event_t *event) {
             stop        = 1;
             break;
 
-        case TB_EVENT_MOUSE: // The user clicked on the board
-            if ((tevent.x <= SPACING_COL * 4 + PADDING_COL) &&
-                (tevent.x >= PADDING_COL) &&
-                (tevent.y <= SPACING_ROW * 4 + PADDING_ROW) &&
-                (tevent.y >= PADDING_ROW) &&
-                (tevent.key == TB_KEY_MOUSE_LEFT)) {
-                int x0 = tevent.x - PADDING_COL;
-                int y0 = tevent.y - PADDING_ROW;
-                if (((x0 % SPACING_COL == 0)) && (y0 % SPACING_ROW == 0)) {
-                    // The user clicked on piece placement on the board
-                    event->type       = EVENT_POSITION;
-                    event->position.c = x0 / SPACING_COL;
-                    event->position.r = y0 / SPACING_ROW;
-                    stop = 1;
+        case TB_EVENT_MOUSE:
+            if (menu != NULL) {
+                int selected_menu_item;
+                selected_menu_item = tevent.y - MENU_ITEM_ROW;
+                if ((selected_menu_item < menu->num_item) &&
+                    (selected_menu_item >= 0) &&
+                    (tevent.x >= MENU_ITEM_COL) &&
+                    (tevent.x < MENU_ITEM_COL +
+                     get_label_clickable_length(menu, selected_menu_item)) &&
+                    (tevent.key == TB_KEY_MOUSE_LEFT)) {
+                    event->type      = EVENT_MENU_ITEM_CLICKED;
+                    event->menu_item = selected_menu_item;
+                    stop             = 1;
                 }
-            } else if ((tevent.x >= QUIT_COL) &&
-                       (tevent.x < QUIT_COL + QUIT_LEN) &&
-                       (tevent.y == QUIT_ROW)) {
-                event->type = EVENT_QUIT;
-                stop        = 1;
+            } else { // The user clicked on the board
+                if ((tevent.x <= SPACING_COL * 4 + PADDING_COL) &&
+                    (tevent.x >= PADDING_COL) &&
+                    (tevent.y <= SPACING_ROW * 4 + PADDING_ROW) &&
+                    (tevent.y >= PADDING_ROW) &&
+                    (tevent.key == TB_KEY_MOUSE_LEFT)) {
+                    int x0 = tevent.x - PADDING_COL;
+                    int y0 = tevent.y - PADDING_ROW;
+                    if (((x0 % SPACING_COL == 0)) && (y0 % SPACING_ROW == 0)) {
+                        // The user clicked on piece placement on the board
+                        event->type       = EVENT_POSITION;
+                        event->position.c = x0 / SPACING_COL;
+                        event->position.r = y0 / SPACING_ROW;
+                        stop = 1;
+                    }
+                } else if ((tevent.x >= QUIT_COL) &&
+                           (tevent.x < QUIT_COL + QUIT_LEN) &&
+                           (tevent.y == QUIT_ROW)) {
+                    event->type = EVENT_QUIT;
+                    stop        = 1;
+                }
             }
             break;
         }
@@ -389,7 +425,8 @@ void graphics_tb_quit(graphics_tb_t *tg) {
 
 
 graphics_callbacks_t graphics_tb_callbacks = {
-    .draw_game  = graphics_tb_draw_game,
-    .wait_event = graphics_tb_wait_event,
-    .draw_menu  = graphics_tb_draw_menu
+    .draw_game       = graphics_tb_draw_game,
+    .wait_event_game = graphics_tb_wait_game_event,
+    .wait_event_menu = graphics_tb_wait_menu_event,
+    .draw_menu       = graphics_tb_draw_menu
 };

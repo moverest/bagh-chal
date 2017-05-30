@@ -3,7 +3,7 @@
 
 #include "ai.h"
 
-typedef struct {} ai_rand_t;
+typedef struct {}   ai_rand_t;
 
 void *ai_rand_new();
 void ai_rand_free(void *context);

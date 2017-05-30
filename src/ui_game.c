@@ -119,7 +119,7 @@ bool ui_game_main(void                 *graphics_context,
             update_possible_positions(&state);
             graphics.draw_game(graphics_context, &state);
 
-            graphics.wait_event(graphics_context, &event);
+            graphics.wait_event_game(graphics_context, &event);
             switch (event.type) {
             case EVENT_QUIT:
                 stop = ui_pause_menu(graphics_context, graphics);

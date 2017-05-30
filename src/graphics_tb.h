@@ -21,7 +21,9 @@ void graphics_tb_draw_game(void *context, game_state_to_draw_t *state);
 // graphics_tb_wait_event waits for an event before continuing.
 // The `event` struct is updated accordingly.
 // This function is used as a callback.
-void graphics_tb_wait_event(void *context, event_t *event);
+void graphics_tb_wait_game_event(void *context, event_t *event);
+
+void graphics_tb_wait_menu_event(void *context, event_t *event, menu_t *menu);
 
 // graphics_tb_quit terminates the graphic module.
 void graphics_tb_quit(graphics_tb_t *tg);
