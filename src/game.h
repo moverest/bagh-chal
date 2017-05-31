@@ -48,4 +48,8 @@ bool game_is_done(game_t *g);
 // Returns 0 on success.
 int game_undo(game_t *g);
 
+
+// game_count_num_movable_tigers returns the number of tigers that can be moved.
+int game_count_num_movable_tigers(game_t *game);
+
 #endif

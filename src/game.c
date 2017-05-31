@@ -337,6 +337,33 @@ static bool is_blocked(board_t *board, player_turn_t turn) {
 
 
 // See header.
+int game_count_num_movable_tigers(game_t *game) {
+    int        count = 0;
+    position_t pos;
+
+    for (pos.c = 0; pos.c < 5; pos.c++) {
+        for (pos.r = 0; pos.r < 5; pos.r++) {
+            if (board_get_cell(&game->board, pos) == TIGER_CELL) {
+                bool movable = false;
+                if (test_possible_position(&game->board, pos, false, NULL)) {
+                    movable = true;
+                }
+                if (position_has_diagonal(pos)) {
+                    if (test_possible_position(&game->board, pos, true, NULL)) {
+                        movable = true;
+                    }
+                }
+
+                if (movable) {
+                    count++;
+                }
+            }
+        }
+    }
+}
+
+
+// See header.
 bool game_is_done(game_t *game) {
     return game->num_eaten_goats > 4 || is_blocked(&game->board, TIGER_TURN);
 }

@@ -34,6 +34,7 @@ static double tiger_winning(void *context, game_t *game, int num_turns) {
 
     score += game->num_eaten_goats * 20 / num_turns;
     score += get_num_tiger_on_diag(game) * 3;
+    score += game_count_num_movable_tigers(game) * 3;
 
     if (game_is_done(game)) {
         score -= 50;
