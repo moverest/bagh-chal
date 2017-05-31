@@ -677,6 +677,7 @@ void draw_menu_string(graphics_minimalist_sdl_t *sg, char *str,
     SDL_DestroyTexture(texture);
 }
 
+
 void menu_item_to_texture(void *context, menu_t *menu, char *str, int i) {
     switch (menu->items[i]->type) {
     case MENU_ITEM_SELECT:
@@ -695,6 +696,7 @@ void menu_item_to_texture(void *context, menu_t *menu, char *str, int i) {
         break;
     }
 }
+
 
 void graphics_draw_menu(void *context, menu_t *menu) {
     graphics_minimalist_sdl_t *sg = context;
@@ -726,7 +728,7 @@ void graphics_draw_menu(void *context, menu_t *menu) {
 static int get_label_clickable_length(void *context, menu_t *menu, int i) {
     graphics_minimalist_sdl_t *sg = context;
 
-    char str[256] = "";
+    char        str[256] = "";
     SDL_Texture *texture;
 
     menu_item_to_texture(sg, menu, str, i);
@@ -738,7 +740,6 @@ static int get_label_clickable_length(void *context, menu_t *menu, int i) {
     SDL_DestroyTexture(texture);
 
     return w;
-
 }
 
 
@@ -817,7 +818,7 @@ void graphics_minimalist_sdl_wait_menu_event(void *context, event_t *event, menu
             ;
             if (menu != NULL) {
                 int selected_menu_item = -1;
-                int label_length = 0;
+                int label_length       = 0;
                 if (sdl_event.button.y - MENU_ITEM_ROW >= 0) {
                     selected_menu_item = (sdl_event.button.y - MENU_ITEM_ROW) / MENU_LINE_ITEMS_SPACING;
                 }
@@ -825,7 +826,7 @@ void graphics_minimalist_sdl_wait_menu_event(void *context, event_t *event, menu
                     (selected_menu_item >= 0)) {
                     label_length = get_label_clickable_length(sg, menu, selected_menu_item);
                     if ((sdl_event.button.x >= WIN_WIDTH / 2 - label_length / 2) &&
-                       (sdl_event.button.x <= WIN_WIDTH / 2 + label_length / 2)) {
+                        (sdl_event.button.x <= WIN_WIDTH / 2 + label_length / 2)) {
                         event->type      = EVENT_MENU_ITEM_CLICKED;
                         event->menu_item = selected_menu_item;
                         return;
