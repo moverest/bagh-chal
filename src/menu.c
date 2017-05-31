@@ -72,7 +72,8 @@ bool menu_click(menu_t *menu, int i) {
 
     if ((i < menu->num_item) &&
         (i >= 0) &&
-        (menu->items[i]->type != MENU_ITEM_EMPTY)) {
+        (menu->items[i]->type != MENU_ITEM_EMPTY) &&
+        (menu->items[i]->type != MENU_ITEM_TEXT)) {
         menu->cursor = i;
         switch (menu->items[menu->cursor]->type) {
         case MENU_ITEM_SELECT:

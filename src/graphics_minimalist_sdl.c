@@ -677,6 +677,24 @@ void draw_menu_string(graphics_minimalist_sdl_t *sg, char *str,
     SDL_DestroyTexture(texture);
 }
 
+void menu_item_to_texture(void *context, menu_t *menu, char *str, int i) {
+    switch (menu->items[i]->type) {
+    case MENU_ITEM_SELECT:
+        sprintf(str, "%s : %s", menu->items[i]->label, menu->items[i]->choices[menu->items[i]->choice]);
+
+        break;
+
+    case MENU_ITEM_TEXT:
+    case MENU_ITEM_BUTTON:
+        sprintf(str, "%s", menu->items[i]->label);
+
+        break;
+
+    default:
+        sprintf(str, "");
+        break;
+    }
+}
 
 void graphics_draw_menu(void *context, menu_t *menu) {
     graphics_minimalist_sdl_t *sg = context;
@@ -695,50 +713,32 @@ void graphics_draw_menu(void *context, menu_t *menu) {
 
     for (int i = 0; i < menu->num_item; i++) {
         bool selected = i == menu->cursor;
-
-        switch (menu->items[i]->type) {
-        case MENU_ITEM_SELECT:
-            sprintf(str, "%s : %s", menu->items[i]->label, menu->items[i]->choices[menu->items[i]->choice]);
-            draw_menu_string(sg, str,
-                             MENU_ITEM_ROW + i * MENU_LINE_ITEMS_SPACING,
-                             selected);
-            break;
-
-        case MENU_ITEM_BUTTON:
-        case MENU_ITEM_TEXT:
-            draw_menu_string(sg, menu->items[i]->label,
-                             MENU_ITEM_ROW + i * MENU_LINE_ITEMS_SPACING,
-                             selected);
-            break;
-
-        case MENU_ITEM_EMPTY:
-            break;
-        }
+        menu_item_to_texture(sg, menu, str, i);
+        draw_menu_string(sg, str,
+                         MENU_ITEM_ROW + i * MENU_LINE_ITEMS_SPACING,
+                         selected);
     }
 
     SDL_RenderPresent(sg->renderer);
 }
 
 
-static int get_label_clickable_length(menu_t *menu, int selected_menu_item) {
-    switch (menu->items[selected_menu_item]->type) {
-    case MENU_ITEM_SELECT:
-        return strlen(menu->items[selected_menu_item]->label)
-               + strlen(menu->items[selected_menu_item]->choices[menu->items[selected_menu_item]->choice])
-               + 3;
+static int get_label_clickable_length(void *context, menu_t *menu, int i) {
+    graphics_minimalist_sdl_t *sg = context;
 
-        break;
+    char str[256] = "";
+    SDL_Texture *texture;
 
-    case MENU_ITEM_BUTTON:
-        return strlen(menu->items[selected_menu_item]->label);
+    menu_item_to_texture(sg, menu, str, i);
 
-        break;
+    texture = str_to_texture(sg, str);
+    int w;
+    SDL_QueryTexture(texture, NULL, NULL, &w, NULL);
 
-    default:
-        return 0;
+    SDL_DestroyTexture(texture);
 
-        break;
-    }
+    return w;
+
 }
 
 
@@ -748,8 +748,7 @@ void graphics_minimalist_sdl_wait_game_event(void *context, event_t *event) {
 
 
 void graphics_minimalist_sdl_wait_menu_event(void *context, event_t *event, menu_t *menu) {
-    int menu_label_length;
-    int selected_menu_item;
+    graphics_minimalist_sdl_t *sg = context;
 
     while (1) {
         SDL_Event sdl_event;
@@ -817,6 +816,21 @@ void graphics_minimalist_sdl_wait_menu_event(void *context, event_t *event, menu
         case SDL_MOUSEBUTTONDOWN:
             ;
             if (menu != NULL) {
+                int selected_menu_item = -1;
+                int label_length = 0;
+                if (sdl_event.button.y - MENU_ITEM_ROW >= 0) {
+                    selected_menu_item = (sdl_event.button.y - MENU_ITEM_ROW) / MENU_LINE_ITEMS_SPACING;
+                }
+                if ((selected_menu_item < menu->num_item) &&
+                    (selected_menu_item >= 0)) {
+                    label_length = get_label_clickable_length(sg, menu, selected_menu_item);
+                    if ((sdl_event.button.x >= WIN_WIDTH / 2 - label_length / 2) &&
+                       (sdl_event.button.x <= WIN_WIDTH / 2 + label_length / 2)) {
+                        event->type      = EVENT_MENU_ITEM_CLICKED;
+                        event->menu_item = selected_menu_item;
+                        return;
+                    }
+                }
             } else {
                 // Positions relative to the board.
                 int x = sdl_event.button.x - (BOARD_X - POSITION_WIDTH / 2);

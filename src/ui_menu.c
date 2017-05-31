@@ -43,12 +43,7 @@ bool ui_menu(void *graphics_context, graphics_callbacks_t graphics, menu_t *menu
             break;
 
         case EVENT_MENU_ITEM_CLICKED:
-            if ((event.menu_item < menu->num_item) &&
-                (event.menu_item >= 0) &&
-                (menu->items[event.menu_item]->type != MENU_ITEM_EMPTY)) {
-                menu->cursor = event.menu_item;
-                stop         = menu_click(menu, event.menu_item);
-            }
+            stop = menu_click(menu, event.menu_item);
             break;
 
         default:
