@@ -26,22 +26,22 @@ $(BUILD_DIR)/test_neuralnet: $(BUILD_DIR) $(foreach f, neuralnet.o matrix.o test
 	$(CC) -o $@ $(SRC_DIR)/test_neuralnet.c $(foreach f, neuralnet.o matrix.o test.o randn.o, $(BUILD_DIR)/$f)
 
 $(BUILD_DIR)/test_graphics_tb: $(BUILD_DIR) $(foreach f, models.o graphics_tb.o graphics_test.o, $(BUILD_DIR)/$f)
-	$(CC) $(TERMBOX_FLAG) -o $@ $(SRC_DIR)/test_graphics_tb.c $(foreach f, models.o graphics_tb.o graphics_test.o, $(BUILD_DIR)/$f)
+	$(CC) -o $@ $(SRC_DIR)/test_graphics_tb.c $(foreach f, models.o graphics_tb.o graphics_test.o, $(BUILD_DIR)/$f) $(TERMBOX_FLAG)
 
 $(BUILD_DIR)/test_graphics_minimalist_sdl: $(BUILD_DIR) $(foreach f, models.o graphics_minimalist_sdl.o graphics_test.o, $(BUILD_DIR)/$f)
-	$(CC) $(SDL_FLAG) -o $@ $(SRC_DIR)/test_graphics_minimalist_sdl.c $(foreach f, models.o graphics_minimalist_sdl.o graphics_test.o, $(BUILD_DIR)/$f)
+	$(CC) -o $@ $(SRC_DIR)/test_graphics_minimalist_sdl.c $(foreach f, models.o graphics_minimalist_sdl.o graphics_test.o, $(BUILD_DIR)/$f) $(SDL_FLAG)
 
 $(BUILD_DIR)/test_menu_tb: $(BUILD_DIR) $(foreach f, models.o menu.o ui_menu.o graphics_tb.o menu_test.o, $(BUILD_DIR)/$f)
-	$(CC) $(TERMBOX_FLAG) -o $@ $(SRC_DIR)/test_menu_tb.c $(foreach f, models.o menu.o ui_menu.o graphics_tb.o menu_test.o, $(BUILD_DIR)/$f)
+	$(CC) -o $@ $(SRC_DIR)/test_menu_tb.c $(foreach f, models.o menu.o ui_menu.o graphics_tb.o menu_test.o, $(BUILD_DIR)/$f) $(TERMBOX_FLAG)
 
 $(BUILD_DIR)/test_menu_graphics_sdl: $(BUILD_DIR) $(foreach f, models.o menu.o ui_menu.o graphics_minimalist_sdl.o menu_test.o, $(BUILD_DIR)/$f)
-	$(CC) $(SDL_FLAG) -o $@ $(SRC_DIR)/test_menu_graphics_sdl.c $(foreach f, models.o menu.o ui_menu.o graphics_minimalist_sdl.o menu_test.o, $(BUILD_DIR)/$f)
+	$(CC) -o $@ $(SRC_DIR)/test_menu_graphics_sdl.c $(foreach f, models.o menu.o ui_menu.o graphics_minimalist_sdl.o menu_test.o, $(BUILD_DIR)/$f) $(SDL_FLAG)
 
 $(BUILD_DIR)/main_tb: $(BUILD_DIR) $(foreach f, graphics_tb.o ui_game.o ui_game_menu.o game.o models.o ai_rand.o menu.o ui_menu.o ui_main.o ui_end_menu.o ui_pause_menu.o stack.o  ai_heuristic.o ai_simple_heuristic.o, $(BUILD_DIR)/$f)
 	$(CC) $(TERMBOX_FLAG) $(SRC_DIR)/main_tb.c  $(foreach f, graphics_tb.o ui_game.o ui_game_menu.o game.o models.o ai_rand.o menu.o ui_menu.o ui_main.o ui_end_menu.o ui_pause_menu.o stack.o ai_heuristic.o ai_simple_heuristic.o, $(BUILD_DIR)/$f) -o $@
 
 $(BUILD_DIR)/main_minimalist_sdl: $(BUILD_DIR) $(foreach f, graphics_minimalist_sdl.o ui_game.o ui_game_menu.o game.o models.o ai_rand.o menu.o ui_menu.o ui_main.o ui_end_menu.o ui_pause_menu.o stack.o ai_heuristic.o ai_simple_heuristic.o, $(BUILD_DIR)/$f)
-	$(CC) $(SDL_FLAG) $(SRC_DIR)/main_minimalist_sdl.c  $(foreach f, graphics_minimalist_sdl.o ui_game.o ui_game_menu.o game.o models.o ai_rand.o menu.o ui_menu.o ui_main.o ui_end_menu.o ui_pause_menu.o stack.o ai_heuristic.o ai_simple_heuristic.o, $(BUILD_DIR)/$f) -o $@
+	$(CC) $(SRC_DIR)/main_minimalist_sdl.c  $(foreach f, graphics_minimalist_sdl.o ui_game.o ui_game_menu.o game.o models.o ai_rand.o menu.o ui_menu.o ui_main.o ui_end_menu.o ui_pause_menu.o stack.o ai_heuristic.o ai_simple_heuristic.o, $(BUILD_DIR)/$f) -o $@ $(SDL_FLAG)
 
 $(BUILD_DIR)/test_test: $(BUILD_DIR) $(BUILD_DIR)/test.o
 	$(CC) $(BUILD_DIR)/test.o $(SRC_DIR)/test_test.c -o $@

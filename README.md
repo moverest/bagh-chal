@@ -12,6 +12,11 @@
 > make
 ```
 
+Pour compiler tout le projet, il faut avoir `termbox`, `SDL2` et `SDL2_ttf` installé. Sinon, voici les cibles pour seulement la SDL2 ou Termbox:
+
+- `build/main_minimalist_sdl`
+- `build/main_tb`
+
 Pour compiler le code avec les flags de débuggage:
 
 ```
