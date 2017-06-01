@@ -644,13 +644,53 @@ void graphics_minimalist_sdl_draw_game(void *context, game_state_to_draw_t *stat
 }
 
 
-void draw_menu_string(graphics_minimalist_sdl_t *sg, char *str,
-                      int y, bool selected) {
-    if (str[0] == '\0') {
-        return;
+#define MAX_ITEM_TXT_SIZE    256
+static SDL_Texture *menu_item_to_texture(graphics_minimalist_sdl_t *sg,
+                                         menu_item_t               *item) {
+    char str[MAX_ITEM_TXT_SIZE];
+
+    switch (item->type) {
+    case MENU_ITEM_SELECT:
+        snprintf(str, MAX_ITEM_TXT_SIZE, "%s : %s", item->label,
+                 item->choices[item->choice]);
+        break;
+
+    case MENU_ITEM_TEXT:
+    case MENU_ITEM_BUTTON:
+        strcpy(str, item->label);
+        break;
+
+    default:
+        return NULL;
     }
 
-    SDL_Texture *texture = str_to_texture(sg, str);
+    return str_to_texture(sg, str);
+}
+
+
+static int get_label_clickable_length(graphics_minimalist_sdl_t *sg,
+                                      menu_item_t               *item) {
+    int w;
+
+    SDL_Texture *texture = menu_item_to_texture(sg, item);
+
+    if (texture == NULL) {
+        return 0;
+    }
+
+    SDL_QueryTexture(texture, NULL, NULL, &w, NULL);
+    SDL_DestroyTexture(texture);
+    return w;
+}
+
+
+static void draw_menu_item(graphics_minimalist_sdl_t *sg, menu_item_t *item,
+                           int y, bool selected) {
+    SDL_Texture *texture = menu_item_to_texture(sg, item);
+
+    if (texture == NULL) {
+        return;
+    }
 
     // Draws the texture horizontally centered
     SDL_Rect texture_rect;
@@ -678,30 +718,8 @@ void draw_menu_string(graphics_minimalist_sdl_t *sg, char *str,
 }
 
 
-void menu_item_to_texture(void *context, menu_t *menu, char *str, int i) {
-    switch (menu->items[i]->type) {
-    case MENU_ITEM_SELECT:
-        sprintf(str, "%s : %s", menu->items[i]->label, menu->items[i]->choices[menu->items[i]->choice]);
-
-        break;
-
-    case MENU_ITEM_TEXT:
-    case MENU_ITEM_BUTTON:
-        sprintf(str, "%s", menu->items[i]->label);
-
-        break;
-
-    default:
-        sprintf(str, "");
-        break;
-    }
-}
-
-
-void graphics_draw_menu(void *context, menu_t *menu) {
+static void graphics_draw_menu(void *context, menu_t *menu) {
     graphics_minimalist_sdl_t *sg = context;
-
-    char str[256] = "";
 
     SDL_SetRenderDrawColor(sg->renderer,
                            BG_COLOR_R,
@@ -711,35 +729,20 @@ void graphics_draw_menu(void *context, menu_t *menu) {
 
     SDL_RenderClear(sg->renderer);
 
-    draw_menu_string(sg, menu->title, MENU_TITLE_Y, false);
+    draw_menu_item(sg, &(menu_item_t){
+        .type = MENU_ITEM_TEXT,
+        .label = menu->title
+    },
+                   MENU_TITLE_Y, false);
 
     for (int i = 0; i < menu->num_item; i++) {
         bool selected = i == menu->cursor;
-        menu_item_to_texture(sg, menu, str, i);
-        draw_menu_string(sg, str,
-                         MENU_ITEM_ROW + i * MENU_LINE_ITEMS_SPACING,
-                         selected);
+        draw_menu_item(sg, menu->items[i],
+                       MENU_ITEM_ROW + i * MENU_LINE_ITEMS_SPACING,
+                       selected);
     }
 
     SDL_RenderPresent(sg->renderer);
-}
-
-
-static int get_label_clickable_length(void *context, menu_t *menu, int i) {
-    graphics_minimalist_sdl_t *sg = context;
-
-    char        str[256] = "";
-    SDL_Texture *texture;
-
-    menu_item_to_texture(sg, menu, str, i);
-
-    texture = str_to_texture(sg, str);
-    int w;
-    SDL_QueryTexture(texture, NULL, NULL, &w, NULL);
-
-    SDL_DestroyTexture(texture);
-
-    return w;
 }
 
 
@@ -824,7 +827,7 @@ void graphics_minimalist_sdl_wait_menu_event(void *context, event_t *event, menu
                 }
                 if ((selected_menu_item < menu->num_item) &&
                     (selected_menu_item >= 0)) {
-                    label_length = get_label_clickable_length(sg, menu, selected_menu_item);
+                    label_length = get_label_clickable_length(sg, menu->items[selected_menu_item]);
                     if ((sdl_event.button.x >= WIN_WIDTH / 2 - label_length / 2) &&
                         (sdl_event.button.x <= WIN_WIDTH / 2 + label_length / 2)) {
                         event->type      = EVENT_MENU_ITEM_CLICKED;
