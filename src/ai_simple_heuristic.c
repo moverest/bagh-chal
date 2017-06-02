@@ -39,6 +39,8 @@ static double tiger_winning(void *context, game_t *game, int num_turns) {
     if (game_is_done(game)) {
         score -= 50;
     }
+
+    return score;
 }
 
 
