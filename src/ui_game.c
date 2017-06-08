@@ -111,12 +111,13 @@ bool ui_game_main(void                 *graphics_context,
     bool stop = false;
 
     while (!game_is_done(state.game) && !stop) {
+        reset_possible_positions(&state.possible_positions);
+        graphics.draw_game(graphics_context, &state);
+        
         if ((tiger_ai != NULL) && (state.game->turn == TIGER_TURN)) {
             game_do_mvt(state.game, tiger_ai->get_tiger_mvt(tiger_ai_context, state.game));
-            graphics.draw_game(graphics_context, &state);
         } else if ((goat_ai != NULL) && (state.game->turn == GOAT_TURN)) {
             game_do_mvt(state.game, goat_ai->get_goat_mvt(goat_ai_context, state.game));
-            graphics.draw_game(graphics_context, &state);
         } else {
             update_possible_positions(&state);
             graphics.draw_game(graphics_context, &state);
