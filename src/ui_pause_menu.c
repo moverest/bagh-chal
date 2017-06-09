@@ -29,10 +29,10 @@ bool ui_pause_menu(void                 *graphics_context,
     };
 
     menu_t menu = {
-        .cursor   =                2,
-        .items    = items,
-        .num_item = ARRAY_LEN(items),
-        .title    = "Bagh-Chal game"
+        .cursor    =                2,
+        .items     = items,
+        .num_items = ARRAY_LEN(items),
+        .title     = "Bagh-Chal game"
     };
 
     bool quit = ui_menu(graphics_context, graphics, &menu);

@@ -23,7 +23,7 @@ typedef struct {
 typedef struct {
     int         cursor;
     menu_item_t **items;
-    int         num_item;
+    int         num_items;
     char        *title;
     bool        quit;
 } menu_t;

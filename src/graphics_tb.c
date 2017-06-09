@@ -263,7 +263,7 @@ void graphics_tb_draw_menu(void *context, menu_t *menu) {
     tb_clear();
     print_str(menu->title, TITLE_COL, TITLE_ROW);
 
-    for (int i = 0; i < menu->num_item; i++) {
+    for (int i = 0; i < menu->num_items; i++) {
         int x = 0;
         switch (menu->items[i]->type) {
         case MENU_ITEM_SELECT:
@@ -380,7 +380,7 @@ void graphics_tb_wait_menu_event(void *context, event_t *event, menu_t *menu) {
             if (menu != NULL) {
                 int selected_menu_item;
                 selected_menu_item = tevent.y - MENU_ITEM_ROW;
-                if ((selected_menu_item < menu->num_item) &&
+                if ((selected_menu_item < menu->num_items) &&
                     (selected_menu_item >= 0) &&
                     (tevent.x >= MENU_ITEM_COL) &&
                     (tevent.x < MENU_ITEM_COL +

@@ -44,10 +44,10 @@ bool ui_game_menu(void                 *graphics_context,
     };
 
     menu_t menu = {
-        .cursor   =                0,
-        .items    = items,
-        .num_item = ARRAY_LEN(items),
-        .title    = "Bagh-Chal game"
+        .cursor    =                0,
+        .items     = items,
+        .num_items = ARRAY_LEN(items),
+        .title     = "Bagh-Chal game"
     };
 
     bool quit = ui_menu(graphics_context, graphics, &menu);

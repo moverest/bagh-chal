@@ -27,12 +27,12 @@ void menu_move_up(menu_t *menu) {
 
 
 void menu_move_down(menu_t *menu) {
-    if (menu->cursor >= menu->num_item - 1) {
+    if (menu->cursor >= menu->num_items - 1) {
         return;
     }
 
     int i = menu->cursor + 1;
-    while (i < menu->num_item) {
+    while (i < menu->num_items) {
         if ((menu->items[i]->type == MENU_ITEM_EMPTY) ||
             (menu->items[i]->type == MENU_ITEM_TEXT)) {
             i++;
@@ -70,7 +70,7 @@ bool menu_enter(menu_t *menu) {
 bool menu_click(menu_t *menu, int i) {
     bool stop = false;
 
-    if ((i < menu->num_item) &&
+    if ((i < menu->num_items) &&
         (i >= 0) &&
         (menu->items[i]->type != MENU_ITEM_EMPTY) &&
         (menu->items[i]->type != MENU_ITEM_TEXT)) {

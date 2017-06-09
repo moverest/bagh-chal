@@ -56,10 +56,10 @@ bool test_menu(void                 *context,
     };
 
     menu_t menu = {
-        .cursor   =                0,
-        .items    = items,
-        .num_item = ARRAY_LEN(items),
-        .title    = "Bagh-Chal game"
+        .cursor    =                0,
+        .items     = items,
+        .num_items = ARRAY_LEN(items),
+        .title     = "Bagh-Chal game"
     };
 
     event_t event;

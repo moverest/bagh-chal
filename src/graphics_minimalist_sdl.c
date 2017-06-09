@@ -733,7 +733,7 @@ static void graphics_draw_menu(void *context, menu_t *menu) {
     },
                    MENU_TITLE_Y, false);
 
-    for (int i = 0; i < menu->num_item; i++) {
+    for (int i = 0; i < menu->num_items; i++) {
         bool selected = i == menu->cursor;
         draw_menu_item(sg, menu->items[i],
                        MENU_ITEM_ROW + i * MENU_LINE_ITEMS_SPACING,
@@ -823,7 +823,7 @@ void graphics_minimalist_sdl_wait_menu_event(void *context, event_t *event, menu
                 if (sdl_event.button.y - MENU_ITEM_ROW >= 0) {
                     selected_menu_item = (sdl_event.button.y - MENU_ITEM_ROW) / MENU_LINE_ITEMS_SPACING;
                 }
-                if ((selected_menu_item < menu->num_item) &&
+                if ((selected_menu_item < menu->num_items) &&
                     (selected_menu_item >= 0)) {
                     label_length = get_label_clickable_length(sg, menu->items[selected_menu_item]);
                     if ((sdl_event.button.x >= WIN_WIDTH / 2 - label_length / 2) &&
