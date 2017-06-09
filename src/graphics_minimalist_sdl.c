@@ -65,8 +65,6 @@
 #define TXT_COLOR_G                255
 #define TXT_COLOR_B                255
 
-
-#define FONT_PATH                  "./res/FiraSans-Regular.ttf"
 #define FONT_SIZE                  30 * SCALE
 
 
@@ -161,7 +159,7 @@ static bool create_text_textures(graphics_minimalist_sdl_t *sg) {
 }
 
 
-graphics_minimalist_sdl_t *graphics_minimalist_sdl_init() {
+graphics_minimalist_sdl_t *graphics_minimalist_sdl_init(char *font_filename) {
     graphics_minimalist_sdl_t *sg = malloc(sizeof(graphics_minimalist_sdl_t));
 
     if (sg == NULL) {
@@ -194,7 +192,7 @@ graphics_minimalist_sdl_t *graphics_minimalist_sdl_init() {
         return NULL;
     }
 
-    sg->font = TTF_OpenFont(FONT_PATH, FONT_SIZE);
+    sg->font = TTF_OpenFont(font_filename, FONT_SIZE);
     if (sg->font == NULL) {
         fprintf(stderr, "Error while loading font: %s\n", TTF_GetError());
         graphics_minimalist_sdl_quit(sg);
