@@ -68,25 +68,21 @@ bool menu_enter(menu_t *menu) {
 
 
 bool menu_click(menu_t *menu, int i) {
-    bool stop = false;
-
-    if ((i < menu->num_items) &&
-        (i >= 0) &&
-        (menu->items[i]->type != MENU_ITEM_EMPTY) &&
-        (menu->items[i]->type != MENU_ITEM_TEXT)) {
-        menu->cursor = i;
+    if ((i < menu->num_items) && (i >= 0)) {
         switch (menu->items[menu->cursor]->type) {
         case MENU_ITEM_SELECT:
+            menu->cursor = i;
             menu_switch_right(menu);
-            break;
+            return false;
 
         case MENU_ITEM_BUTTON:
-            stop = menu_enter(menu);
-            break;
+            menu->cursor = i;
+            return menu_enter(menu);
 
         default:
             break;
         }
     }
-    return stop;
+
+    return false;
 }
