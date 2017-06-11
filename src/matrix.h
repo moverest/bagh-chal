@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 // matrix_t represents a matrix.
-// Use make_matrix to create one and free_matrix to distroy it.
+// Use make_matrix to create one and free_matrix to destroy it.
 typedef struct {
     int    num_cols;
     int    num_rows;
