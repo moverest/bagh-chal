@@ -816,7 +816,6 @@ void graphics_minimalist_sdl_wait_menu_event(void *context, event_t *event, menu
             return;
 
         case SDL_MOUSEBUTTONDOWN:
-            ;
             if (menu != NULL) {
                 int selected_menu_item = -1;
                 int label_length       = 0;
