@@ -5,7 +5,7 @@
 // go_through_all_mvt calls the `action` function with each possible move from
 // the given board state (and the given context, and game).
 // Before every `action` call, the movement is done and undone afterward.
-// If the `action` function returns true, the functino stops.
+// If the `action` function returns true, the function stops.
 static void go_through_all_mvt(game_t *game,
                                void   *context,
                                bool (*action)(void *context,
