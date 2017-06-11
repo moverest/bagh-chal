@@ -461,9 +461,9 @@ static void draw_board(graphics_minimalist_sdl_t *sg, game_state_to_draw_t *stat
 }
 
 
-static int draw_input_draw_texture(graphics_minimalist_sdl_t *sg,
-                                   SDL_Texture               *texture,
-                                   int                       x) {
+static int draw_input_texture(graphics_minimalist_sdl_t *sg,
+                              SDL_Texture               *texture,
+                              int                       x) {
     SDL_Rect rect = {
         .x = x,
         .y = PROMPT_Y
@@ -483,28 +483,28 @@ static void draw_input(graphics_minimalist_sdl_t *sg, game_state_to_draw_t *stat
 
 
 
-    x += draw_input_draw_texture(sg,
-                                 placing_goats ? sg->prompt_put_texture : sg->prompt_move_texture,
-                                 x);
+    x += draw_input_texture(sg,
+                            placing_goats ? sg->prompt_put_texture : sg->prompt_move_texture,
+                            x);
 
 
 
     if (position_is_set(state->input.from)) {
-        x += draw_input_draw_texture(sg,
-                                     get_tag_texture_from_pos(sg, state->input.from),
-                                     x);
+        x += draw_input_texture(sg,
+                                get_tag_texture_from_pos(sg, state->input.from),
+                                x);
 
         if (!placing_goats) {
-            x += draw_input_draw_texture(sg,
-                                         sg->prompt_to_texture,
-                                         x);
+            x += draw_input_texture(sg,
+                                    sg->prompt_to_texture,
+                                    x);
         }
     }
 
     if (position_is_set(state->input.to)) {
-        x += draw_input_draw_texture(sg,
-                                     get_tag_texture_from_pos(sg, state->input.to),
-                                     x);
+        x += draw_input_texture(sg,
+                                get_tag_texture_from_pos(sg, state->input.to),
+                                x);
     }
 
 
