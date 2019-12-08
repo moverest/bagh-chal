@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
     graphics_minimalist_sdl_t *sg = graphics_minimalist_sdl_init(font_filename);
 
     if (sg == NULL) {
-        fprintf(stderr, "An error happend while loading the graphics module.\n");
+        fprintf(stderr, "An error happened while loading the graphics module.\n");
         return -1;
     }
 
