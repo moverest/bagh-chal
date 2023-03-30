@@ -52,7 +52,9 @@ static void input_backspace(mvt_t *input) {
          i++) {
     }
 
-    *coordinates_p[i - 1] = POSITION_NOT_SET;
+    if (i > 0) {
+        *coordinates_p[i - 1] = POSITION_NOT_SET;
+    }
 }
 
 
