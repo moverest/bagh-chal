@@ -37,6 +37,6 @@ bool menu_enter(menu_t *menu);
 bool menu_esc(menu_t *menu);
 bool menu_click(menu_t *menu, int i);
 
-menu_item_t EMPTY_MENU_ITEM;
+extern menu_item_t EMPTY_MENU_ITEM;
 
 #endif

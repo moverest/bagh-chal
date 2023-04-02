@@ -32,5 +32,6 @@
 *.dSYM/
 *.su
 
-# CMake
+# Other
 /build
+/.cache

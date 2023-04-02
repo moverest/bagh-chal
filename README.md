@@ -17,22 +17,16 @@ Only possible positions are marked with a position letter.
 
 ### Archlinux
 
-If your are using Archlinux, you can find the GUI version in the [AUR repository](https://aur.archlinux.org/packages/bagh-chal-gui/).
+If you are using Archlinux, you can find the GUI version in the [AUR repository](https://aur.archlinux.org/packages/bagh-chal-gui/).
 
 ### Building from sources
 
-You can build the SDL version with:
-
 ```bash
-make build/main_minimalist_sdl
+meson setup build
+meson compile -C build
 ```
 
-Or the Termbox version with:
-
-```bash
-make build/main_tb
-```
-
+The binaries are `./build/bagh-chal-sdl` and `./build/bagh-chal-tb` for the SDL and Termbox versions.
 
 ## Dependencies
 
